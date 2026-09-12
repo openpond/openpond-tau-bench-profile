@@ -96,3 +96,20 @@ The Python protocol test drives the actual τ Gym/orchestrator with a scripted c
 Upstream: Sierra Research's [τ2-bench](https://github.com/sierra-research/tau2-bench), commit `672227c6b6676edc20d57ea53b7000262aae77b9`. The dependency is fetched during setup; we do not duplicate the retail dataset or tool implementations in this repo. See `UPSTREAM.json` and `THIRD_PARTY_LICENSE_TAU.txt` for attribution and the upstream MIT license.
 
 The profile source uses MIT licensing. GitHub source publication does not establish Profile installation or managed execution qualification. No customer credentials, generated attempts or upstream checkout belong in the public source tree.
+
+### Models task package
+
+`bun scripts/export-model.ts` exports the qualified DB cases into
+`exports/retail.taskset.json`, using the normal OpenPond Taskset package and
+Grader contracts. It preserves customer-private scenarios and native criteria in
+`expectedOutput`, with only the case ID and retail policy visible to the policy.
+The package pins the executable profile commit and upstream revision. The native
+process Grader recomputes upstream evaluation from a host-recorded simulation;
+model-supplied scores are never accepted. Python, pinned tau2 and its data must be
+materialized by the profile runtime before execution.
+
+The Models Get Started importer can save selected tasks and this Grader now.
+Hosted profile task execution and managed RL admission remain separate work.
+Both cases belong to the same demonstration family; this is not a held-out
+benchmark split. Regenerate the export after committing executable source so its
+profile revision points to the exact implementation being imported.

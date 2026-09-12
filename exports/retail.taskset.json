@@ -1,0 +1,1635 @@
+{
+  "schemaVersion": "openpond.tasksetPackage.v1",
+  "taskset": {
+    "schemaVersion": "openpond.tasksetRelease.v2",
+    "id": "tau-retail-demo",
+    "revision": 1,
+    "policy": {
+      "policyVisibleFields": [
+        "input",
+        "policyVisibleContext"
+      ],
+      "privilegedFields": [
+        "expectedOutput",
+        "privilegedContextRef"
+      ],
+      "hiddenGraderRefs": [
+        "tau-retail-native-db"
+      ],
+      "connectedAppScopes": []
+    },
+    "environment": {
+      "protocolVersion": "openpond.environment.v1",
+      "kind": "agent",
+      "entrypoint": "openpond.profile-task.v1",
+      "stateful": true,
+      "deterministicSeeds": true,
+      "lifecycle": [
+        "create",
+        "reset",
+        "step",
+        "collect",
+        "destroy"
+      ],
+      "networkPolicy": "declared_scoped",
+      "defaultTimeoutMs": 180000
+    },
+    "environmentRelease": {
+      "id": "tau-retail-profile-environment",
+      "contentHash": "e2b8b15a32ef2156134f2c0d6c0909f38718a6e3089769e2b9d567def2443040"
+    },
+    "tools": [
+      {
+        "name": "calculate",
+        "description": "Calculate the result of a mathematical expression.",
+        "inputSchema": {
+          "properties": {
+            "expression": {
+              "description": "The mathematical expression to calculate, such as '2 + 2'. The expression can contain numbers, operators (+, -, *, /), parentheses, and spaces.",
+              "title": "Expression",
+              "type": "string"
+            }
+          },
+          "required": [
+            "expression"
+          ],
+          "title": "parameters",
+          "type": "object"
+        },
+        "inputSchemaHash": "e301948026b441798904407802d60cb400dbdd48c9b3176995bc6c721840fadd",
+        "sideEffect": "write",
+        "timeoutMs": 10000
+      },
+      {
+        "name": "cancel_pending_order",
+        "description": "Cancel a pending order. If the order is already processed or delivered,\n\nit cannot be cancelled. The agent needs to explain the cancellation detail\nand ask for explicit user confirmation (yes/no) to proceed. If the user confirms,\nthe order status will be changed to 'cancelled' and the payment will be refunded.\nThe refund will be added to the user's gift card balance immediately if the payment\nwas made using a gift card, otherwise the refund would take 5-7 business days to process.\nThe function returns the order details after the cancellation.",
+        "inputSchema": {
+          "properties": {
+            "order_id": {
+              "description": "The order id, such as '#W0000000'. Be careful there is a '#' symbol at the beginning of the order id.",
+              "title": "Order Id",
+              "type": "string"
+            },
+            "reason": {
+              "description": "The reason for cancellation, which should be either 'no longer needed' or 'ordered by mistake'.",
+              "title": "Reason",
+              "type": "string"
+            }
+          },
+          "required": [
+            "order_id",
+            "reason"
+          ],
+          "title": "parameters",
+          "type": "object"
+        },
+        "inputSchemaHash": "49062ae0792e0a1604741960e66897751c46be97777287b205d571cebe74519a",
+        "sideEffect": "write",
+        "timeoutMs": 10000
+      },
+      {
+        "name": "exchange_delivered_order_items",
+        "description": "Exchange items in a delivered order to new items of the same product type.\n\nFor a delivered order, return or exchange can be only done once by the agent.\nThe agent needs to explain the exchange detail and ask for explicit user confirmation (yes/no) to proceed.",
+        "inputSchema": {
+          "properties": {
+            "order_id": {
+              "description": "The order id, such as '#W0000000'. Be careful there is a '#' symbol at the beginning of the order id.",
+              "title": "Order Id",
+              "type": "string"
+            },
+            "item_ids": {
+              "description": "The item ids to be exchanged, each such as '1008292230'. There could be duplicate items in the list.",
+              "items": {
+                "type": "string"
+              },
+              "title": "Item Ids",
+              "type": "array"
+            },
+            "new_item_ids": {
+              "description": "The item ids to be exchanged for, each such as '1008292230'.\nThere could be duplicate items in the list. Each new item id should match the item id\nin the same position and be of the same product.",
+              "items": {
+                "type": "string"
+              },
+              "title": "New Item Ids",
+              "type": "array"
+            },
+            "payment_method_id": {
+              "description": "The payment method id to pay or receive refund for the item price difference,\nsuch as 'gift_card_0000000' or 'credit_card_0000000'. These can be looked up\nfrom the user or order details.",
+              "title": "Payment Method Id",
+              "type": "string"
+            }
+          },
+          "required": [
+            "order_id",
+            "item_ids",
+            "new_item_ids",
+            "payment_method_id"
+          ],
+          "title": "parameters",
+          "type": "object"
+        },
+        "inputSchemaHash": "f4fe806b7388eb2463fc89b6dbfc75c8516c0a1dfa4061987bcd7be7ae4cdf58",
+        "sideEffect": "write",
+        "timeoutMs": 10000
+      },
+      {
+        "name": "find_user_id_by_name_zip",
+        "description": "Find user id by first name, last name, and zip code. If the user is not found, the function\n\nwill return an error message. By default, find user id by email, and only call this function\nif the user is not found by email or cannot remember email.",
+        "inputSchema": {
+          "properties": {
+            "first_name": {
+              "description": "The first name of the customer, such as 'John'.",
+              "title": "First Name",
+              "type": "string"
+            },
+            "last_name": {
+              "description": "The last name of the customer, such as 'Doe'.",
+              "title": "Last Name",
+              "type": "string"
+            },
+            "zip": {
+              "description": "The zip code of the customer, such as '12345'.",
+              "title": "Zip",
+              "type": "string"
+            }
+          },
+          "required": [
+            "first_name",
+            "last_name",
+            "zip"
+          ],
+          "title": "parameters",
+          "type": "object"
+        },
+        "inputSchemaHash": "ec249fc35fcb472b6ac0c57e841e84cfd0d38ca9c54be50f098c949b98e2f43a",
+        "sideEffect": "write",
+        "timeoutMs": 10000
+      },
+      {
+        "name": "find_user_id_by_email",
+        "description": "Find user id by email. If the user is not found, the function will return an error message.",
+        "inputSchema": {
+          "properties": {
+            "email": {
+              "description": "The email of the user, such as 'something@example.com'.",
+              "title": "Email",
+              "type": "string"
+            }
+          },
+          "required": [
+            "email"
+          ],
+          "title": "parameters",
+          "type": "object"
+        },
+        "inputSchemaHash": "66144211638f75a1b2bb64eb13b52e8797f25bb5414a2ce4da87d477b0a05ef1",
+        "sideEffect": "write",
+        "timeoutMs": 10000
+      },
+      {
+        "name": "get_order_details",
+        "description": "Get the status and details of an order.",
+        "inputSchema": {
+          "properties": {
+            "order_id": {
+              "description": "The order id, such as '#W0000000'. Be careful there is a '#' symbol at the beginning of the order id.",
+              "title": "Order Id",
+              "type": "string"
+            }
+          },
+          "required": [
+            "order_id"
+          ],
+          "title": "parameters",
+          "type": "object"
+        },
+        "inputSchemaHash": "1b48f665590c829dec7ef550d3a1887af14b1202f9a457007d171cb42370aea2",
+        "sideEffect": "write",
+        "timeoutMs": 10000
+      },
+      {
+        "name": "get_product_details",
+        "description": "Get the inventory details of a product.",
+        "inputSchema": {
+          "properties": {
+            "product_id": {
+              "description": "The product id, such as '6086499569'. Be careful the product id is different from the item id.",
+              "title": "Product Id",
+              "type": "string"
+            }
+          },
+          "required": [
+            "product_id"
+          ],
+          "title": "parameters",
+          "type": "object"
+        },
+        "inputSchemaHash": "b3e40378e809c6b0d1a71e92759ed266e368c31d85faf455202a1355754f49ea",
+        "sideEffect": "write",
+        "timeoutMs": 10000
+      },
+      {
+        "name": "get_item_details",
+        "description": "Get the inventory details of an item.",
+        "inputSchema": {
+          "properties": {
+            "item_id": {
+              "description": "The item id, such as '6086499569'. Be careful the item id is different from the product id.",
+              "title": "Item Id",
+              "type": "string"
+            }
+          },
+          "required": [
+            "item_id"
+          ],
+          "title": "parameters",
+          "type": "object"
+        },
+        "inputSchemaHash": "bedc02c798141149255a91fc8ed157666c35396adccd58fdcdbfd01cca1ad964",
+        "sideEffect": "write",
+        "timeoutMs": 10000
+      },
+      {
+        "name": "get_user_details",
+        "description": "Get the details of a user, including their orders.",
+        "inputSchema": {
+          "properties": {
+            "user_id": {
+              "description": "The user id, such as 'sara_doe_496'.",
+              "title": "User Id",
+              "type": "string"
+            }
+          },
+          "required": [
+            "user_id"
+          ],
+          "title": "parameters",
+          "type": "object"
+        },
+        "inputSchemaHash": "baea79076472342d26be86e2fe28e35d382096ee8ef792057933900f2d44b370",
+        "sideEffect": "write",
+        "timeoutMs": 10000
+      },
+      {
+        "name": "list_all_product_types",
+        "description": "List the name and product id of all product types.\n\nEach product type has a variety of different items with unique item ids and options.\nThere are only 50 product types in the store.",
+        "inputSchema": {
+          "properties": {},
+          "title": "parameters",
+          "type": "object"
+        },
+        "inputSchemaHash": "12c542c336d499edec5903cae4848b4c3c2b82a7640b31042d18ca1baf8f1ae9",
+        "sideEffect": "write",
+        "timeoutMs": 10000
+      },
+      {
+        "name": "modify_pending_order_address",
+        "description": "Modify the shipping address of a pending order. The agent needs to explain the modification detail and ask for explicit user confirmation (yes/no) to proceed.",
+        "inputSchema": {
+          "properties": {
+            "order_id": {
+              "description": "The order id, such as '#W0000000'. Be careful there is a '#' symbol at the beginning of the order id.",
+              "title": "Order Id",
+              "type": "string"
+            },
+            "address1": {
+              "description": "The first line of the address, such as '123 Main St'.",
+              "title": "Address1",
+              "type": "string"
+            },
+            "address2": {
+              "description": "The second line of the address, such as 'Apt 1' or ''.",
+              "title": "Address2",
+              "type": "string"
+            },
+            "city": {
+              "description": "The city, such as 'San Francisco'.",
+              "title": "City",
+              "type": "string"
+            },
+            "state": {
+              "description": "The state, such as 'CA'.",
+              "title": "State",
+              "type": "string"
+            },
+            "country": {
+              "description": "The country, such as 'USA'.",
+              "title": "Country",
+              "type": "string"
+            },
+            "zip": {
+              "description": "The zip code, such as '12345'.",
+              "title": "Zip",
+              "type": "string"
+            }
+          },
+          "required": [
+            "order_id",
+            "address1",
+            "address2",
+            "city",
+            "state",
+            "country",
+            "zip"
+          ],
+          "title": "parameters",
+          "type": "object"
+        },
+        "inputSchemaHash": "8bc46bd98755d2d5b65bd88d79780a4e8493bfe99f7f4012dcdd7aef78b6ae16",
+        "sideEffect": "write",
+        "timeoutMs": 10000
+      },
+      {
+        "name": "modify_pending_order_items",
+        "description": "Modify items in a pending order to new items of the same product type. For a pending order, this function can only be called once. The agent needs to explain the exchange detail and ask for explicit user confirmation (yes/no) to proceed.",
+        "inputSchema": {
+          "properties": {
+            "order_id": {
+              "description": "The order id, such as '#W0000000'. Be careful there is a '#' symbol at the beginning of the order id.",
+              "title": "Order Id",
+              "type": "string"
+            },
+            "item_ids": {
+              "description": "The item ids to be modified, each such as '1008292230'. There could be duplicate items in the list.",
+              "items": {
+                "type": "string"
+              },
+              "title": "Item Ids",
+              "type": "array"
+            },
+            "new_item_ids": {
+              "description": "The item ids to be modified for, each such as '1008292230'. There could be duplicate items in the list. Each new item id should match the item id in the same position and be of the same product.",
+              "items": {
+                "type": "string"
+              },
+              "title": "New Item Ids",
+              "type": "array"
+            },
+            "payment_method_id": {
+              "description": "The payment method id to pay or receive refund for the item price difference, such as 'gift_card_0000000' or 'credit_card_0000000'. These can be looked up from the user or order details.",
+              "title": "Payment Method Id",
+              "type": "string"
+            }
+          },
+          "required": [
+            "order_id",
+            "item_ids",
+            "new_item_ids",
+            "payment_method_id"
+          ],
+          "title": "parameters",
+          "type": "object"
+        },
+        "inputSchemaHash": "ecf637f06c0f2a9661a2528c6fffa5d4caa3c31a6850bb68c65dd98462809a7d",
+        "sideEffect": "write",
+        "timeoutMs": 10000
+      },
+      {
+        "name": "modify_pending_order_payment",
+        "description": "Modify the payment method of a pending order. The agent needs to explain the modification detail and ask for explicit user confirmation (yes/no) to proceed.",
+        "inputSchema": {
+          "properties": {
+            "order_id": {
+              "description": "The order id, such as '#W0000000'. Be careful there is a '#' symbol at the beginning of the order id.",
+              "title": "Order Id",
+              "type": "string"
+            },
+            "payment_method_id": {
+              "description": "The payment method id to pay or receive refund for the item price difference, such as 'gift_card_0000000' or 'credit_card_0000000'. These can be looked up from the user or order details.",
+              "title": "Payment Method Id",
+              "type": "string"
+            }
+          },
+          "required": [
+            "order_id",
+            "payment_method_id"
+          ],
+          "title": "parameters",
+          "type": "object"
+        },
+        "inputSchemaHash": "85dc33b9ea3dad91a32893cfd70f458d9de8781dfa3758d16cc438ad46ec120d",
+        "sideEffect": "write",
+        "timeoutMs": 10000
+      },
+      {
+        "name": "modify_user_address",
+        "description": "Modify the default address of a user. The agent needs to explain the modification detail and ask for explicit user confirmation (yes/no) to proceed.",
+        "inputSchema": {
+          "properties": {
+            "user_id": {
+              "description": "The user id, such as 'sara_doe_496'.",
+              "title": "User Id",
+              "type": "string"
+            },
+            "address1": {
+              "description": "The first line of the address, such as '123 Main St'.",
+              "title": "Address1",
+              "type": "string"
+            },
+            "address2": {
+              "description": "The second line of the address, such as 'Apt 1' or ''.",
+              "title": "Address2",
+              "type": "string"
+            },
+            "city": {
+              "description": "The city, such as 'San Francisco'.",
+              "title": "City",
+              "type": "string"
+            },
+            "state": {
+              "description": "The state, such as 'CA'.",
+              "title": "State",
+              "type": "string"
+            },
+            "country": {
+              "description": "The country, such as 'USA'.",
+              "title": "Country",
+              "type": "string"
+            },
+            "zip": {
+              "description": "The zip code, such as '12345'.",
+              "title": "Zip",
+              "type": "string"
+            }
+          },
+          "required": [
+            "user_id",
+            "address1",
+            "address2",
+            "city",
+            "state",
+            "country",
+            "zip"
+          ],
+          "title": "parameters",
+          "type": "object"
+        },
+        "inputSchemaHash": "0395e2809e8afd8b2bb84cb05b0c8adc9fd4ad5c134df962dbcdabd893835b90",
+        "sideEffect": "write",
+        "timeoutMs": 10000
+      },
+      {
+        "name": "return_delivered_order_items",
+        "description": "Return some items of a delivered order.\n\nThe order status will be changed to 'return requested'.\nThe agent needs to explain the return detail and ask for explicit user confirmation (yes/no) to proceed.\nThe user will receive follow-up email for how and where to return the item.",
+        "inputSchema": {
+          "properties": {
+            "order_id": {
+              "description": "The order id, such as '#W0000000'. Be careful there is a '#' symbol at the beginning of the order id.",
+              "title": "Order Id",
+              "type": "string"
+            },
+            "item_ids": {
+              "description": "The item ids to be returned, each such as '1008292230'. There could be duplicate items in the list.",
+              "items": {
+                "type": "string"
+              },
+              "title": "Item Ids",
+              "type": "array"
+            },
+            "payment_method_id": {
+              "description": "The payment method id to pay or receive refund for the item price difference, such as 'gift_card_0000000' or 'credit_card_0000000'.\nThese can be looked up from the user or order details.",
+              "title": "Payment Method Id",
+              "type": "string"
+            }
+          },
+          "required": [
+            "order_id",
+            "item_ids",
+            "payment_method_id"
+          ],
+          "title": "parameters",
+          "type": "object"
+        },
+        "inputSchemaHash": "5a454c451e486af84f92727288e45fa2f1e9db4bdd8c0c65e223e6783149fa19",
+        "sideEffect": "write",
+        "timeoutMs": 10000
+      },
+      {
+        "name": "transfer_to_human_agents",
+        "description": "Transfer the user to a human agent, with a summary of the user's issue.\n\nOnly transfer if\n -  the user explicitly asks for a human agent\n -  given the policy and the available tools, you cannot solve the user's issue.",
+        "inputSchema": {
+          "properties": {
+            "summary": {
+              "description": "A summary of the user's issue.",
+              "title": "Summary",
+              "type": "string"
+            }
+          },
+          "required": [
+            "summary"
+          ],
+          "title": "parameters",
+          "type": "object"
+        },
+        "inputSchemaHash": "de4bb70297072b49c347021b043c040957180bbe21df16adaeba0a829d63df5c",
+        "sideEffect": "write",
+        "timeoutMs": 10000
+      }
+    ],
+    "capabilities": [],
+    "tasks": [
+      {
+        "id": "33",
+        "clusterKey": "tau-retail-shared-customer-demo",
+        "split": "train",
+        "input": {
+          "taskId": "33"
+        },
+        "expectedOutput": {
+          "task": {
+            "id": "33",
+            "description": {
+              "purpose": null,
+              "relevant_policies": null,
+              "notes": null
+            },
+            "user_scenario": {
+              "persona": null,
+              "instructions": {
+                "domain": "retail",
+                "reason_for_call": "You had a work-from-home situation and ordered three home office items along with some hiking items, so that you can go back to your parent's place at Seattle to remote work and enjoy outdoor life. But your company just announced that you will be back to the office soon. If cancelling partial items is possible with the agent, you want to return the office items (your forgot what) and keep the hiking items. You want to know the total amount you will get back, and you want to get the refund on your original payment method. If cancelling partial items is not possible, just keep the order and forget about it, but change your default user profile address to the Seattle parent house shown in your order (you do not want to reveal it in chat).",
+                "known_info": "You are an interesting guy called Noah Patel, living in the Big Apple in 10108.",
+                "unknown_info": "You do not remember your email address",
+                "task_instructions": "You are a funny guy but recently the work from home situation has made you a bit anxious."
+              }
+            },
+            "ticket": null,
+            "initial_state": null,
+            "evaluation_criteria": {
+              "actions": [
+                {
+                  "action_id": "33_0",
+                  "requestor": "assistant",
+                  "name": "find_user_id_by_name_zip",
+                  "arguments": {
+                    "first_name": "Noah",
+                    "last_name": "Patel",
+                    "zip": "10108"
+                  },
+                  "info": null,
+                  "compare_args": null
+                },
+                {
+                  "action_id": "33_1",
+                  "requestor": "assistant",
+                  "name": "get_user_details",
+                  "arguments": {
+                    "user_id": "noah_patel_6952"
+                  },
+                  "info": null,
+                  "compare_args": null
+                },
+                {
+                  "action_id": "33_2",
+                  "requestor": "assistant",
+                  "name": "get_order_details",
+                  "arguments": {
+                    "order_id": "#W6111398"
+                  },
+                  "info": null,
+                  "compare_args": null
+                },
+                {
+                  "action_id": "33_3",
+                  "requestor": "assistant",
+                  "name": "get_order_details",
+                  "arguments": {
+                    "order_id": "#W7043598"
+                  },
+                  "info": null,
+                  "compare_args": null
+                },
+                {
+                  "action_id": "33_4",
+                  "requestor": "assistant",
+                  "name": "get_order_details",
+                  "arguments": {
+                    "order_id": "#W1845024"
+                  },
+                  "info": null,
+                  "compare_args": null
+                },
+                {
+                  "action_id": "33_5",
+                  "requestor": "assistant",
+                  "name": "modify_user_address",
+                  "arguments": {
+                    "user_id": "noah_patel_6952",
+                    "address1": "517 Lakeview Drive",
+                    "address2": "Suite 183",
+                    "city": "Seattle",
+                    "country": "USA",
+                    "state": "WA",
+                    "zip": "98195"
+                  },
+                  "info": null,
+                  "compare_args": null
+                }
+              ],
+              "env_assertions": null,
+              "communicate_info": [],
+              "nl_assertions": [],
+              "reward_basis": [
+                "DB"
+              ]
+            },
+            "issues": null,
+            "required_documents": null,
+            "user_tools": null
+          }
+        },
+        "policyVisibleContext": {
+          "instructions": "# Retail agent policy\n\nAs a retail agent, you can help users:\n\n- **cancel or modify pending orders**\n- **return or exchange delivered orders**\n- **modify their default user address**\n- **provide information about their own profile, orders, and related products**\n\nAt the beginning of the conversation, you have to authenticate the user identity by locating their user id via email, or via name + zip code. This has to be done even when the user already provides the user id.\n\nOnce the user has been authenticated, you can provide the user with information about order, product, profile information, e.g. help the user look up order id.\n\nYou can only help one user per conversation (but you can handle multiple requests from the same user), and must deny any requests for tasks related to any other user.\n\nBefore taking any action that updates the database (cancel, modify, return, exchange), you must list the action details and obtain explicit user confirmation (yes) to proceed.\n\nYou should not make up any information or knowledge or procedures not provided by the user or the tools, or give subjective recommendations or comments.\n\nYou should at most make one tool call at a time, and if you take a tool call, you should not respond to the user at the same time. If you respond to the user, you should not make a tool call at the same time.\n\nYou should deny user requests that are against this policy.\n\nYou should transfer the user to a human agent if and only if the request cannot be handled within the scope of your actions. To transfer, first make a tool call to transfer_to_human_agents, and then send the message 'YOU ARE BEING TRANSFERRED TO A HUMAN AGENT. PLEASE HOLD ON.' to the user.\n\n## Domain basic\n\n- All times in the database are EST and 24 hour based. For example \"02:30:00\" means 2:30 AM EST.\n\n### User\n\nEach user has a profile containing:\n\n- unique user id\n- email\n- default address\n- payment methods.\n\nThere are three types of payment methods: **gift card**, **paypal account**, **credit card**.\n\n### Product\n\nOur retail store has 50 types of products.\n\nFor each **type of product**, there are **variant items** of different **options**.\n\nFor example, for a 't-shirt' product, there could be a variant item with option 'color blue size M', and another variant item with option 'color red size L'.\n\nEach product has the following attributes:\n\n- unique product id\n- name\n- list of variants\n\nEach variant item has the following attributes:\n\n- unique item id\n- information about the value of the product options for this item.\n- availability\n- price\n\nNote: Product ID and Item ID have no relations and should not be confused!\n\n### Order\n\nEach order has the following attributes:\n\n- unique order id\n- user id\n- address\n- items ordered\n- status\n- fullfilments info (tracking id and item ids)\n- payment history\n\nThe status of an order can be: **pending**, **processed**, **delivered**, or **cancelled**.\n\nOrders can have other optional attributes based on the actions that have been taken (cancellation reason, which items have been exchanged, what was the exchane price difference etc)\n\n## Generic action rules\n\nGenerally, you can only take action on pending or delivered orders.\n\nExchange or modify order tools can only be called once per order. Be sure that all items to be changed are collected into a list before making the tool call!!!\n\n## Cancel pending order\n\nAn order can only be cancelled if its status is 'pending', and you should check its status before taking the action.\n\nThe user needs to confirm the order id and the reason (either 'no longer needed' or 'ordered by mistake') for cancellation. Other reasons are not acceptable.\n\nAfter user confirmation, the order status will be changed to 'cancelled', and the total will be refunded via the original payment method immediately if it is gift card, otherwise in 5 to 7 business days.\n\n## Modify pending order\n\nAn order can only be modified if its status is 'pending', and you should check its status before taking the action.\n\nFor a pending order, you can take actions to modify its shipping address, payment method, or product item options, but nothing else.\n\n### Modify payment\n\nThe user can only choose a single payment method different from the original payment method.\n\nIf the user wants the modify the payment method to gift card, it must have enough balance to cover the total amount.\n\nAfter user confirmation, the order status will be kept as 'pending'. The original payment method will be refunded immediately if it is a gift card, otherwise it will be refunded within 5 to 7 business days.\n\n### Modify items\n\nThis action can only be called once, and will change the order status to 'pending (items modifed)'. The agent will not be able to modify or cancel the order anymore. So you must confirm all the details are correct and be cautious before taking this action. In particular, remember to remind the customer to confirm they have provided all the items they want to modify.\n\nFor a pending order, each item can be modified to an available new item of the same product but of different product option. There cannot be any change of product types, e.g. modify shirt to shoe.\n\nThe user must provide a payment method to pay or receive refund of the price difference. If the user provides a gift card, it must have enough balance to cover the price difference.\n\n## Return delivered order\n\nAn order can only be returned if its status is 'delivered', and you should check its status before taking the action.\n\nThe user needs to confirm the order id and the list of items to be returned.\n\nThe user needs to provide a payment method to receive the refund.\n\nThe refund must either go to the original payment method, or an existing gift card.\n\nAfter user confirmation, the order status will be changed to 'return requested', and the user will receive an email regarding how to return items.\n\n## Exchange delivered order\n\nAn order can only be exchanged if its status is 'delivered', and you should check its status before taking the action. In particular, remember to remind the customer to confirm they have provided all items to be exchanged.\n\nFor a delivered order, each item can be exchanged to an available new item of the same product but of different product option. There cannot be any change of product types, e.g. modify shirt to shoe.\n\nThe user must provide a payment method to pay or receive refund of the price difference. If the user provides a gift card, it must have enough balance to cover the price difference.\n\nAfter user confirmation, the order status will be changed to 'exchange requested', and the user will receive an email regarding how to return items. There is no need to place a new order."
+        },
+        "privilegedContextRef": null,
+        "artifactRefs": [],
+        "tags": [
+          "tau2-retail",
+          "native-db",
+          "demo"
+        ]
+      },
+      {
+        "id": "34",
+        "clusterKey": "tau-retail-shared-customer-demo",
+        "split": "train",
+        "input": {
+          "taskId": "34"
+        },
+        "expectedOutput": {
+          "task": {
+            "id": "34",
+            "description": {
+              "purpose": null,
+              "relevant_policies": null,
+              "notes": null
+            },
+            "user_scenario": {
+              "persona": null,
+              "instructions": {
+                "domain": "retail",
+                "reason_for_call": "You had a work-from-home situation and ordered three home office items along with some hiking items, so that you can go back to your parent's place at Seattle to remote work and enjoy outdoor life. But your company just announced that you will be back to the office soon. If cancelling partial items is possible with the agent, you want to return the office items (your forgot what) and keep the hiking items. You want to know the total amount you will get back, and you want to get the refund on your original payment method. If cancelling partial items is not possible, just change the address to your NYC place and you will return the items later.",
+                "known_info": "You are an interesting guy called Noah Patel, living in the Big Apple in 10108.",
+                "unknown_info": "You don't have an email",
+                "task_instructions": "You are a funny guy but recently the WFH situation made you a bit anxious."
+              }
+            },
+            "ticket": null,
+            "initial_state": null,
+            "evaluation_criteria": {
+              "actions": [
+                {
+                  "action_id": "34_0",
+                  "requestor": "assistant",
+                  "name": "find_user_id_by_name_zip",
+                  "arguments": {
+                    "first_name": "Noah",
+                    "last_name": "Patel",
+                    "zip": "10108"
+                  },
+                  "info": null,
+                  "compare_args": null
+                },
+                {
+                  "action_id": "34_1",
+                  "requestor": "assistant",
+                  "name": "get_user_details",
+                  "arguments": {
+                    "user_id": "noah_patel_6952"
+                  },
+                  "info": null,
+                  "compare_args": null
+                },
+                {
+                  "action_id": "34_2",
+                  "requestor": "assistant",
+                  "name": "get_order_details",
+                  "arguments": {
+                    "order_id": "#W6111398"
+                  },
+                  "info": null,
+                  "compare_args": null
+                },
+                {
+                  "action_id": "34_3",
+                  "requestor": "assistant",
+                  "name": "get_order_details",
+                  "arguments": {
+                    "order_id": "#W7043598"
+                  },
+                  "info": null,
+                  "compare_args": null
+                },
+                {
+                  "action_id": "34_4",
+                  "requestor": "assistant",
+                  "name": "get_order_details",
+                  "arguments": {
+                    "order_id": "#W1845024"
+                  },
+                  "info": null,
+                  "compare_args": null
+                },
+                {
+                  "action_id": "34_5",
+                  "requestor": "assistant",
+                  "name": "modify_pending_order_address",
+                  "arguments": {
+                    "order_id": "#W1845024",
+                    "address1": "224 Elm Street",
+                    "address2": "Suite 491",
+                    "city": "New York",
+                    "country": "USA",
+                    "state": "NY",
+                    "zip": "10108"
+                  },
+                  "info": null,
+                  "compare_args": null
+                }
+              ],
+              "env_assertions": null,
+              "communicate_info": [],
+              "nl_assertions": [],
+              "reward_basis": [
+                "DB"
+              ]
+            },
+            "issues": null,
+            "required_documents": null,
+            "user_tools": null
+          }
+        },
+        "policyVisibleContext": {
+          "instructions": "# Retail agent policy\n\nAs a retail agent, you can help users:\n\n- **cancel or modify pending orders**\n- **return or exchange delivered orders**\n- **modify their default user address**\n- **provide information about their own profile, orders, and related products**\n\nAt the beginning of the conversation, you have to authenticate the user identity by locating their user id via email, or via name + zip code. This has to be done even when the user already provides the user id.\n\nOnce the user has been authenticated, you can provide the user with information about order, product, profile information, e.g. help the user look up order id.\n\nYou can only help one user per conversation (but you can handle multiple requests from the same user), and must deny any requests for tasks related to any other user.\n\nBefore taking any action that updates the database (cancel, modify, return, exchange), you must list the action details and obtain explicit user confirmation (yes) to proceed.\n\nYou should not make up any information or knowledge or procedures not provided by the user or the tools, or give subjective recommendations or comments.\n\nYou should at most make one tool call at a time, and if you take a tool call, you should not respond to the user at the same time. If you respond to the user, you should not make a tool call at the same time.\n\nYou should deny user requests that are against this policy.\n\nYou should transfer the user to a human agent if and only if the request cannot be handled within the scope of your actions. To transfer, first make a tool call to transfer_to_human_agents, and then send the message 'YOU ARE BEING TRANSFERRED TO A HUMAN AGENT. PLEASE HOLD ON.' to the user.\n\n## Domain basic\n\n- All times in the database are EST and 24 hour based. For example \"02:30:00\" means 2:30 AM EST.\n\n### User\n\nEach user has a profile containing:\n\n- unique user id\n- email\n- default address\n- payment methods.\n\nThere are three types of payment methods: **gift card**, **paypal account**, **credit card**.\n\n### Product\n\nOur retail store has 50 types of products.\n\nFor each **type of product**, there are **variant items** of different **options**.\n\nFor example, for a 't-shirt' product, there could be a variant item with option 'color blue size M', and another variant item with option 'color red size L'.\n\nEach product has the following attributes:\n\n- unique product id\n- name\n- list of variants\n\nEach variant item has the following attributes:\n\n- unique item id\n- information about the value of the product options for this item.\n- availability\n- price\n\nNote: Product ID and Item ID have no relations and should not be confused!\n\n### Order\n\nEach order has the following attributes:\n\n- unique order id\n- user id\n- address\n- items ordered\n- status\n- fullfilments info (tracking id and item ids)\n- payment history\n\nThe status of an order can be: **pending**, **processed**, **delivered**, or **cancelled**.\n\nOrders can have other optional attributes based on the actions that have been taken (cancellation reason, which items have been exchanged, what was the exchane price difference etc)\n\n## Generic action rules\n\nGenerally, you can only take action on pending or delivered orders.\n\nExchange or modify order tools can only be called once per order. Be sure that all items to be changed are collected into a list before making the tool call!!!\n\n## Cancel pending order\n\nAn order can only be cancelled if its status is 'pending', and you should check its status before taking the action.\n\nThe user needs to confirm the order id and the reason (either 'no longer needed' or 'ordered by mistake') for cancellation. Other reasons are not acceptable.\n\nAfter user confirmation, the order status will be changed to 'cancelled', and the total will be refunded via the original payment method immediately if it is gift card, otherwise in 5 to 7 business days.\n\n## Modify pending order\n\nAn order can only be modified if its status is 'pending', and you should check its status before taking the action.\n\nFor a pending order, you can take actions to modify its shipping address, payment method, or product item options, but nothing else.\n\n### Modify payment\n\nThe user can only choose a single payment method different from the original payment method.\n\nIf the user wants the modify the payment method to gift card, it must have enough balance to cover the total amount.\n\nAfter user confirmation, the order status will be kept as 'pending'. The original payment method will be refunded immediately if it is a gift card, otherwise it will be refunded within 5 to 7 business days.\n\n### Modify items\n\nThis action can only be called once, and will change the order status to 'pending (items modifed)'. The agent will not be able to modify or cancel the order anymore. So you must confirm all the details are correct and be cautious before taking this action. In particular, remember to remind the customer to confirm they have provided all the items they want to modify.\n\nFor a pending order, each item can be modified to an available new item of the same product but of different product option. There cannot be any change of product types, e.g. modify shirt to shoe.\n\nThe user must provide a payment method to pay or receive refund of the price difference. If the user provides a gift card, it must have enough balance to cover the price difference.\n\n## Return delivered order\n\nAn order can only be returned if its status is 'delivered', and you should check its status before taking the action.\n\nThe user needs to confirm the order id and the list of items to be returned.\n\nThe user needs to provide a payment method to receive the refund.\n\nThe refund must either go to the original payment method, or an existing gift card.\n\nAfter user confirmation, the order status will be changed to 'return requested', and the user will receive an email regarding how to return items.\n\n## Exchange delivered order\n\nAn order can only be exchanged if its status is 'delivered', and you should check its status before taking the action. In particular, remember to remind the customer to confirm they have provided all items to be exchanged.\n\nFor a delivered order, each item can be exchanged to an available new item of the same product but of different product option. There cannot be any change of product types, e.g. modify shirt to shoe.\n\nThe user must provide a payment method to pay or receive refund of the price difference. If the user provides a gift card, it must have enough balance to cover the price difference.\n\nAfter user confirmation, the order status will be changed to 'exchange requested', and the user will receive an email regarding how to return items. There is no need to place a new order."
+        },
+        "privilegedContextRef": null,
+        "artifactRefs": [],
+        "tags": [
+          "tau2-retail",
+          "native-db",
+          "demo"
+        ]
+      }
+    ],
+    "graders": [
+      {
+        "id": "tau-retail-native-db",
+        "version": "1",
+        "weight": 1,
+        "hardGate": true,
+        "rewardEligible": true,
+        "privileged": true,
+        "kind": "custom_verifier",
+        "runtime": "sandbox_process",
+        "verifierRef": {
+          "id": "asset-240b3b9547fda5d0edd27df4c88a5c39196fd297f9c0f5bc64a996b5881be14e-d8e575d14d498425",
+          "path": "graders/verify.mjs",
+          "contentHash": "240b3b9547fda5d0edd27df4c88a5c39196fd297f9c0f5bc64a996b5881be14e",
+          "sizeBytes": 821,
+          "mediaType": "application/javascript",
+          "visibility": "verifier"
+        },
+        "exportName": "verify",
+        "timeoutMs": 30000,
+        "networkPolicy": "none"
+      }
+    ],
+    "verifierSetRelease": {
+      "id": "tau-retail-native-verifiers",
+      "contentHash": "a26b48573121dc0ff9e3665799dd8dc5490450bc5e42eec943c77c24c0605edd"
+    },
+    "metadata": {
+      "taskPreviews": {
+        "33": {
+          "persona": null,
+          "instructions": {
+            "domain": "retail",
+            "reason_for_call": "You had a work-from-home situation and ordered three home office items along with some hiking items, so that you can go back to your parent's place at Seattle to remote work and enjoy outdoor life. But your company just announced that you will be back to the office soon. If cancelling partial items is possible with the agent, you want to return the office items (your forgot what) and keep the hiking items. You want to know the total amount you will get back, and you want to get the refund on your original payment method. If cancelling partial items is not possible, just keep the order and forget about it, but change your default user profile address to the Seattle parent house shown in your order (you do not want to reveal it in chat).",
+            "known_info": "You are an interesting guy called Noah Patel, living in the Big Apple in 10108.",
+            "unknown_info": "You do not remember your email address",
+            "task_instructions": "You are a funny guy but recently the work from home situation has made you a bit anxious."
+          }
+        },
+        "34": {
+          "persona": null,
+          "instructions": {
+            "domain": "retail",
+            "reason_for_call": "You had a work-from-home situation and ordered three home office items along with some hiking items, so that you can go back to your parent's place at Seattle to remote work and enjoy outdoor life. But your company just announced that you will be back to the office soon. If cancelling partial items is possible with the agent, you want to return the office items (your forgot what) and keep the hiking items. You want to know the total amount you will get back, and you want to get the refund on your original payment method. If cancelling partial items is not possible, just change the address to your NYC place and you will return the items later.",
+            "known_info": "You are an interesting guy called Noah Patel, living in the Big Apple in 10108.",
+            "unknown_info": "You don't have an email",
+            "task_instructions": "You are a funny guy but recently the WFH situation made you a bit anxious."
+          }
+        }
+      },
+      "starter": {
+        "taskDefinition": {
+          "id": "tau-retail-profile-tasks",
+          "contentHash": "884873897ee9f6cce0ee100380d99fe7097876d5d9115655bc8a6eed77cfe0d7",
+          "revision": 1
+        },
+        "rewardBinding": {
+          "id": "tau-retail-native-grading",
+          "contentHash": "7ac39325713fdc98f845bf543c91de890ec26f43e9d0d029df98cf9b76abef69",
+          "revision": 1
+        }
+      },
+      "profile": {
+        "repository": "openpond/openpond-tau-bench-profile",
+        "revision": "0abc1b9e6458f455f853cebce995cdfce7359183",
+        "profile": "tau-retail",
+        "agent": "retail",
+        "action": "run-task",
+        "upstreamRevision": "672227c6b6676edc20d57ea53b7000262aae77b9"
+      },
+      "provenance": {
+        "repository": "sierra-research/tau2-bench",
+        "revision": "672227c6b6676edc20d57ea53b7000262aae77b9",
+        "license": "MIT"
+      },
+      "executionStatus": "requires_profile_task_runtime",
+      "demoOnly": true
+    },
+    "contentHash": "449c6f54d8235927d09c78e0a6d7d5e179d70f31c2865d60c90703ef7252251a"
+  },
+  "environment": {
+    "schemaVersion": "openpond.environmentRelease.v1",
+    "id": "tau-retail-profile-environment",
+    "revision": 1,
+    "contract": {
+      "protocolVersion": "openpond.environment.v1",
+      "kind": "agent",
+      "entrypoint": "openpond.profile-task.v1",
+      "stateful": true,
+      "deterministicSeeds": true,
+      "lifecycle": [
+        "create",
+        "reset",
+        "step",
+        "collect",
+        "destroy"
+      ],
+      "networkPolicy": "declared_scoped",
+      "defaultTimeoutMs": 180000
+    },
+    "actionSchemaRef": null,
+    "observationSchemaRef": null,
+    "stateSchemaRef": null,
+    "artifactCollection": {
+      "maxArtifacts": 10,
+      "maxTotalBytes": 10485760
+    },
+    "adapterConformanceHashes": {},
+    "metadata": {
+      "profile": {
+        "repository": "openpond/openpond-tau-bench-profile",
+        "revision": "0abc1b9e6458f455f853cebce995cdfce7359183",
+        "profile": "tau-retail",
+        "agent": "retail",
+        "action": "run-task",
+        "upstreamRevision": "672227c6b6676edc20d57ea53b7000262aae77b9"
+      },
+      "executionStatus": "requires_profile_task_runtime"
+    },
+    "contentHash": "e2b8b15a32ef2156134f2c0d6c0909f38718a6e3089769e2b9d567def2443040"
+  },
+  "verifierSet": {
+    "schemaVersion": "openpond.verifierSetRelease.v1",
+    "id": "tau-retail-native-verifiers",
+    "revision": 1,
+    "graders": [
+      {
+        "id": "tau-retail-native-db",
+        "version": "1",
+        "weight": 1,
+        "hardGate": true,
+        "rewardEligible": true,
+        "privileged": true,
+        "kind": "custom_verifier",
+        "runtime": "sandbox_process",
+        "verifierRef": {
+          "id": "asset-240b3b9547fda5d0edd27df4c88a5c39196fd297f9c0f5bc64a996b5881be14e-d8e575d14d498425",
+          "path": "graders/verify.mjs",
+          "contentHash": "240b3b9547fda5d0edd27df4c88a5c39196fd297f9c0f5bc64a996b5881be14e",
+          "sizeBytes": 821,
+          "mediaType": "application/javascript",
+          "visibility": "verifier"
+        },
+        "exportName": "verify",
+        "timeoutMs": 30000,
+        "networkPolicy": "none"
+      }
+    ],
+    "isolation": {
+      "processBoundary": "isolated_process",
+      "networkPolicy": "none",
+      "defaultTimeoutMs": 30000
+    },
+    "calibrationReceiptRefs": [],
+    "metadata": {
+      "profile": {
+        "repository": "openpond/openpond-tau-bench-profile",
+        "revision": "0abc1b9e6458f455f853cebce995cdfce7359183",
+        "profile": "tau-retail",
+        "agent": "retail",
+        "action": "run-task",
+        "upstreamRevision": "672227c6b6676edc20d57ea53b7000262aae77b9"
+      }
+    },
+    "contentHash": "a26b48573121dc0ff9e3665799dd8dc5490450bc5e42eec943c77c24c0605edd"
+  },
+  "files": [
+    {
+      "asset": {
+        "id": "asset-240b3b9547fda5d0edd27df4c88a5c39196fd297f9c0f5bc64a996b5881be14e-d8e575d14d498425",
+        "path": "graders/verify.mjs",
+        "contentHash": "240b3b9547fda5d0edd27df4c88a5c39196fd297f9c0f5bc64a996b5881be14e",
+        "sizeBytes": 821,
+        "mediaType": "application/javascript",
+        "visibility": "verifier"
+      },
+      "base64": "aW1wb3J0IHsgc3Bhd25TeW5jIH0gZnJvbSAnbm9kZTpjaGlsZF9wcm9jZXNzJzsKaW1wb3J0IHsgZmlsZVVSTFRvUGF0aCB9IGZyb20gJ25vZGU6dXJsJzsKCi8vIFRoZSBkZWNsYXJlZCBwcm9maWxlIHJ1bnRpbWUgc3VwcGxpZXMgcGlubmVkIHRhdTIgKyBkYXRhIGFuZCBQeXRob24gZGVwZW5kZW5jaWVzLgovLyBNaXNzaW5nIHJ1bnRpbWUgZGVwZW5kZW5jaWVzIGFyZSBleGVjdXRpb24gZXJyb3JzLCBuZXZlciBhIHBhc3NpbmcvemVybyBncmFkZS4KZXhwb3J0IGZ1bmN0aW9uIHZlcmlmeSh2YWx1ZSkgewogIGlmICghdmFsdWU/LmV4cGVjdGVkPy50YXNrIHx8ICF2YWx1ZT8uZXZhbHVhdG9yQ29udGV4dD8uc2ltdWxhdGlvbikgdGhyb3cgbmV3IEVycm9yKCdIb3N0LXJlY29yZGVkIG5hdGl2ZSBzaW11bGF0aW9uIGFuZCBwcml2YXRlIHRhc2sgYXJlIHJlcXVpcmVkJyk7CiAgY29uc3QgcmVzdWx0ID0gc3Bhd25TeW5jKCdweXRob24zJywgW2ZpbGVVUkxUb1BhdGgobmV3IFVSTCgnLi92ZXJpZnkucHknLCBpbXBvcnQubWV0YS51cmwpKV0sIHsKICAgIGlucHV0OiBKU09OLnN0cmluZ2lmeSh2YWx1ZSksIGVuY29kaW5nOiAndXRmOCcsIHRpbWVvdXQ6IDI1MDAwLCBtYXhCdWZmZXI6IDEwNDg1NzYsCiAgICBlbnY6IHsgLi4ucHJvY2Vzcy5lbnYsIFBZVEhPTl9ET1RFTlZfRElTQUJMRUQ6ICcxJyB9LAogIH0pOwogIGlmIChyZXN1bHQuZXJyb3IgfHwgcmVzdWx0LnN0YXR1cyAhPT0gMCkgdGhyb3cgbmV3IEVycm9yKCdOYXRpdmUgdGF1IGV2YWx1YXRvciBmYWlsZWQnKTsKICByZXR1cm4gSlNPTi5wYXJzZShyZXN1bHQuc3Rkb3V0KTsKfQo="
+    },
+    {
+      "asset": {
+        "id": "asset-9948ce7247a89c4d8eb9a0e7b6f6ea1f38a12625a5d3b6f6432f46c8a4f45541-6a1bec9e8c19c4d6",
+        "path": "graders/verify.py",
+        "contentHash": "9948ce7247a89c4d8eb9a0e7b6f6ea1f38a12625a5d3b6f6432f46c8a4f45541",
+        "sizeBytes": 985,
+        "mediaType": "text/x-python",
+        "visibility": "verifier"
+      },
+      "base64": "IiIiUmVjb21wdXRlIG5hdGl2ZSBncmFkaW5nIGZyb20gaG9zdC1yZWNvcmRlZCBzaW11bGF0aW9uLCBuZXZlciBtb2RlbCBzY29yZXMuIiIiCmltcG9ydCBqc29uCmltcG9ydCBvcwppbXBvcnQgc3lzCm9zLmVudmlyb25bJ1BZVEhPTl9ET1RFTlZfRElTQUJMRUQnXSA9ICcxJwpmcm9tIGxvZ3VydSBpbXBvcnQgbG9nZ2VyCmxvZ2dlci5yZW1vdmUoKQpmcm9tIHRhdTIuZGF0YV9tb2RlbC50YXNrcyBpbXBvcnQgVGFzawpmcm9tIHRhdTIuZGF0YV9tb2RlbC5zaW11bGF0aW9uIGltcG9ydCBTaW11bGF0aW9uUnVuCmZyb20gdGF1Mi5ldmFsdWF0b3IuZXZhbHVhdG9yIGltcG9ydCBldmFsdWF0ZV9zaW11bGF0aW9uLCBFdmFsdWF0aW9uVHlwZQoKdmFsdWUgPSBqc29uLmxvYWQoc3lzLnN0ZGluKQp0YXNrID0gVGFzay5tb2RlbF92YWxpZGF0ZSh2YWx1ZVsnZXhwZWN0ZWQnXVsndGFzayddKQpzaW11bGF0aW9uID0gU2ltdWxhdGlvblJ1bi5tb2RlbF92YWxpZGF0ZSh2YWx1ZVsnZXZhbHVhdG9yQ29udGV4dCddWydzaW11bGF0aW9uJ10pCmlmIHNpbXVsYXRpb24udGFza19pZCAhPSB0YXNrLmlkOgogICAgcmFpc2UgVmFsdWVFcnJvcignU2ltdWxhdGlvbiBiZWxvbmdzIHRvIGFub3RoZXIgdGFzaycpCmlmIFt4LnZhbHVlIGZvciB4IGluIHRhc2suZXZhbHVhdGlvbl9jcml0ZXJpYS5yZXdhcmRfYmFzaXNdICE9IFsnREInXToKICAgIHJhaXNlIFZhbHVlRXJyb3IoJ1Vuc3VwcG9ydGVkIGdyYWRpbmcgcmVxdWlyZW1lbnRzJykKcmVzdWx0ID0gZXZhbHVhdGVfc2ltdWxhdGlvbihzaW11bGF0aW9uLCB0YXNrLCBFdmFsdWF0aW9uVHlwZS5BTEwsIEZhbHNlLCAncmV0YWlsJykKcHJpbnQoanNvbi5kdW1wcyh7J3Njb3JlJzogcmVzdWx0LnJld2FyZCwgJ3Bhc3NlZCc6IHJlc3VsdC5yZXdhcmQgPT0gMSwgJ2ZlZWRiYWNrJzogJ05hdGl2ZSB0YXUgcmV0YWlsIGRhdGFiYXNlIGV2YWx1YXRpb24uJywgJ2V2aWRlbmNlUmVmcyc6IFtdfSkpCg=="
+    }
+  ],
+  "modelResources": {
+    "taskDefinition": {
+      "schemaVersion": "openpond.taskDefinition.v1",
+      "id": "tau-retail-profile-tasks",
+      "revision": 1,
+      "name": "τ Retail",
+      "description": "Selected native retail scenarios from the executable τ profile.",
+      "instructions": "# Retail agent policy\n\nAs a retail agent, you can help users:\n\n- **cancel or modify pending orders**\n- **return or exchange delivered orders**\n- **modify their default user address**\n- **provide information about their own profile, orders, and related products**\n\nAt the beginning of the conversation, you have to authenticate the user identity by locating their user id via email, or via name + zip code. This has to be done even when the user already provides the user id.\n\nOnce the user has been authenticated, you can provide the user with information about order, product, profile information, e.g. help the user look up order id.\n\nYou can only help one user per conversation (but you can handle multiple requests from the same user), and must deny any requests for tasks related to any other user.\n\nBefore taking any action that updates the database (cancel, modify, return, exchange), you must list the action details and obtain explicit user confirmation (yes) to proceed.\n\nYou should not make up any information or knowledge or procedures not provided by the user or the tools, or give subjective recommendations or comments.\n\nYou should at most make one tool call at a time, and if you take a tool call, you should not respond to the user at the same time. If you respond to the user, you should not make a tool call at the same time.\n\nYou should deny user requests that are against this policy.\n\nYou should transfer the user to a human agent if and only if the request cannot be handled within the scope of your actions. To transfer, first make a tool call to transfer_to_human_agents, and then send the message 'YOU ARE BEING TRANSFERRED TO A HUMAN AGENT. PLEASE HOLD ON.' to the user.\n\n## Domain basic\n\n- All times in the database are EST and 24 hour based. For example \"02:30:00\" means 2:30 AM EST.\n\n### User\n\nEach user has a profile containing:\n\n- unique user id\n- email\n- default address\n- payment methods.\n\nThere are three types of payment methods: **gift card**, **paypal account**, **credit card**.\n\n### Product\n\nOur retail store has 50 types of products.\n\nFor each **type of product**, there are **variant items** of different **options**.\n\nFor example, for a 't-shirt' product, there could be a variant item with option 'color blue size M', and another variant item with option 'color red size L'.\n\nEach product has the following attributes:\n\n- unique product id\n- name\n- list of variants\n\nEach variant item has the following attributes:\n\n- unique item id\n- information about the value of the product options for this item.\n- availability\n- price\n\nNote: Product ID and Item ID have no relations and should not be confused!\n\n### Order\n\nEach order has the following attributes:\n\n- unique order id\n- user id\n- address\n- items ordered\n- status\n- fullfilments info (tracking id and item ids)\n- payment history\n\nThe status of an order can be: **pending**, **processed**, **delivered**, or **cancelled**.\n\nOrders can have other optional attributes based on the actions that have been taken (cancellation reason, which items have been exchanged, what was the exchane price difference etc)\n\n## Generic action rules\n\nGenerally, you can only take action on pending or delivered orders.\n\nExchange or modify order tools can only be called once per order. Be sure that all items to be changed are collected into a list before making the tool call!!!\n\n## Cancel pending order\n\nAn order can only be cancelled if its status is 'pending', and you should check its status before taking the action.\n\nThe user needs to confirm the order id and the reason (either 'no longer needed' or 'ordered by mistake') for cancellation. Other reasons are not acceptable.\n\nAfter user confirmation, the order status will be changed to 'cancelled', and the total will be refunded via the original payment method immediately if it is gift card, otherwise in 5 to 7 business days.\n\n## Modify pending order\n\nAn order can only be modified if its status is 'pending', and you should check its status before taking the action.\n\nFor a pending order, you can take actions to modify its shipping address, payment method, or product item options, but nothing else.\n\n### Modify payment\n\nThe user can only choose a single payment method different from the original payment method.\n\nIf the user wants the modify the payment method to gift card, it must have enough balance to cover the total amount.\n\nAfter user confirmation, the order status will be kept as 'pending'. The original payment method will be refunded immediately if it is a gift card, otherwise it will be refunded within 5 to 7 business days.\n\n### Modify items\n\nThis action can only be called once, and will change the order status to 'pending (items modifed)'. The agent will not be able to modify or cancel the order anymore. So you must confirm all the details are correct and be cautious before taking this action. In particular, remember to remind the customer to confirm they have provided all the items they want to modify.\n\nFor a pending order, each item can be modified to an available new item of the same product but of different product option. There cannot be any change of product types, e.g. modify shirt to shoe.\n\nThe user must provide a payment method to pay or receive refund of the price difference. If the user provides a gift card, it must have enough balance to cover the price difference.\n\n## Return delivered order\n\nAn order can only be returned if its status is 'delivered', and you should check its status before taking the action.\n\nThe user needs to confirm the order id and the list of items to be returned.\n\nThe user needs to provide a payment method to receive the refund.\n\nThe refund must either go to the original payment method, or an existing gift card.\n\nAfter user confirmation, the order status will be changed to 'return requested', and the user will receive an email regarding how to return items.\n\n## Exchange delivered order\n\nAn order can only be exchanged if its status is 'delivered', and you should check its status before taking the action. In particular, remember to remind the customer to confirm they have provided all items to be exchanged.\n\nFor a delivered order, each item can be exchanged to an available new item of the same product but of different product option. There cannot be any change of product types, e.g. modify shirt to shoe.\n\nThe user must provide a payment method to pay or receive refund of the price difference. If the user provides a gift card, it must have enough balance to cover the price difference.\n\nAfter user confirmation, the order status will be changed to 'exchange requested', and the user will receive an email regarding how to return items. There is no need to place a new order.",
+      "category": "tool_workflow",
+      "familyNamespace": "tau-retail-customer",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "taskId"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object"
+      },
+      "rewardBinding": {
+        "id": "tau-retail-native-grading",
+        "contentHash": "7ac39325713fdc98f845bf543c91de890ec26f43e9d0d029df98cf9b76abef69",
+        "revision": 1
+      },
+      "harness": null,
+      "execution": {
+        "policy": {
+          "policyVisibleFields": [
+            "input",
+            "policyVisibleContext"
+          ],
+          "privilegedFields": [
+            "expectedOutput",
+            "privilegedContextRef"
+          ],
+          "hiddenGraderRefs": [
+            "tau-retail-native-db"
+          ],
+          "connectedAppScopes": []
+        },
+        "environment": {
+          "protocolVersion": "openpond.environment.v1",
+          "kind": "agent",
+          "entrypoint": "openpond.profile-task.v1",
+          "stateful": true,
+          "deterministicSeeds": true,
+          "lifecycle": [
+            "create",
+            "reset",
+            "step",
+            "collect",
+            "destroy"
+          ],
+          "networkPolicy": "declared_scoped",
+          "defaultTimeoutMs": 180000
+        },
+        "environmentRelease": {
+          "id": "tau-retail-profile-environment",
+          "contentHash": "e2b8b15a32ef2156134f2c0d6c0909f38718a6e3089769e2b9d567def2443040"
+        },
+        "tools": [
+          {
+            "name": "calculate",
+            "description": "Calculate the result of a mathematical expression.",
+            "inputSchema": {
+              "properties": {
+                "expression": {
+                  "description": "The mathematical expression to calculate, such as '2 + 2'. The expression can contain numbers, operators (+, -, *, /), parentheses, and spaces.",
+                  "title": "Expression",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "expression"
+              ],
+              "title": "parameters",
+              "type": "object"
+            },
+            "inputSchemaHash": "e301948026b441798904407802d60cb400dbdd48c9b3176995bc6c721840fadd",
+            "sideEffect": "write",
+            "timeoutMs": 10000
+          },
+          {
+            "name": "cancel_pending_order",
+            "description": "Cancel a pending order. If the order is already processed or delivered,\n\nit cannot be cancelled. The agent needs to explain the cancellation detail\nand ask for explicit user confirmation (yes/no) to proceed. If the user confirms,\nthe order status will be changed to 'cancelled' and the payment will be refunded.\nThe refund will be added to the user's gift card balance immediately if the payment\nwas made using a gift card, otherwise the refund would take 5-7 business days to process.\nThe function returns the order details after the cancellation.",
+            "inputSchema": {
+              "properties": {
+                "order_id": {
+                  "description": "The order id, such as '#W0000000'. Be careful there is a '#' symbol at the beginning of the order id.",
+                  "title": "Order Id",
+                  "type": "string"
+                },
+                "reason": {
+                  "description": "The reason for cancellation, which should be either 'no longer needed' or 'ordered by mistake'.",
+                  "title": "Reason",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "order_id",
+                "reason"
+              ],
+              "title": "parameters",
+              "type": "object"
+            },
+            "inputSchemaHash": "49062ae0792e0a1604741960e66897751c46be97777287b205d571cebe74519a",
+            "sideEffect": "write",
+            "timeoutMs": 10000
+          },
+          {
+            "name": "exchange_delivered_order_items",
+            "description": "Exchange items in a delivered order to new items of the same product type.\n\nFor a delivered order, return or exchange can be only done once by the agent.\nThe agent needs to explain the exchange detail and ask for explicit user confirmation (yes/no) to proceed.",
+            "inputSchema": {
+              "properties": {
+                "order_id": {
+                  "description": "The order id, such as '#W0000000'. Be careful there is a '#' symbol at the beginning of the order id.",
+                  "title": "Order Id",
+                  "type": "string"
+                },
+                "item_ids": {
+                  "description": "The item ids to be exchanged, each such as '1008292230'. There could be duplicate items in the list.",
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "Item Ids",
+                  "type": "array"
+                },
+                "new_item_ids": {
+                  "description": "The item ids to be exchanged for, each such as '1008292230'.\nThere could be duplicate items in the list. Each new item id should match the item id\nin the same position and be of the same product.",
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "New Item Ids",
+                  "type": "array"
+                },
+                "payment_method_id": {
+                  "description": "The payment method id to pay or receive refund for the item price difference,\nsuch as 'gift_card_0000000' or 'credit_card_0000000'. These can be looked up\nfrom the user or order details.",
+                  "title": "Payment Method Id",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "order_id",
+                "item_ids",
+                "new_item_ids",
+                "payment_method_id"
+              ],
+              "title": "parameters",
+              "type": "object"
+            },
+            "inputSchemaHash": "f4fe806b7388eb2463fc89b6dbfc75c8516c0a1dfa4061987bcd7be7ae4cdf58",
+            "sideEffect": "write",
+            "timeoutMs": 10000
+          },
+          {
+            "name": "find_user_id_by_name_zip",
+            "description": "Find user id by first name, last name, and zip code. If the user is not found, the function\n\nwill return an error message. By default, find user id by email, and only call this function\nif the user is not found by email or cannot remember email.",
+            "inputSchema": {
+              "properties": {
+                "first_name": {
+                  "description": "The first name of the customer, such as 'John'.",
+                  "title": "First Name",
+                  "type": "string"
+                },
+                "last_name": {
+                  "description": "The last name of the customer, such as 'Doe'.",
+                  "title": "Last Name",
+                  "type": "string"
+                },
+                "zip": {
+                  "description": "The zip code of the customer, such as '12345'.",
+                  "title": "Zip",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "first_name",
+                "last_name",
+                "zip"
+              ],
+              "title": "parameters",
+              "type": "object"
+            },
+            "inputSchemaHash": "ec249fc35fcb472b6ac0c57e841e84cfd0d38ca9c54be50f098c949b98e2f43a",
+            "sideEffect": "write",
+            "timeoutMs": 10000
+          },
+          {
+            "name": "find_user_id_by_email",
+            "description": "Find user id by email. If the user is not found, the function will return an error message.",
+            "inputSchema": {
+              "properties": {
+                "email": {
+                  "description": "The email of the user, such as 'something@example.com'.",
+                  "title": "Email",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "email"
+              ],
+              "title": "parameters",
+              "type": "object"
+            },
+            "inputSchemaHash": "66144211638f75a1b2bb64eb13b52e8797f25bb5414a2ce4da87d477b0a05ef1",
+            "sideEffect": "write",
+            "timeoutMs": 10000
+          },
+          {
+            "name": "get_order_details",
+            "description": "Get the status and details of an order.",
+            "inputSchema": {
+              "properties": {
+                "order_id": {
+                  "description": "The order id, such as '#W0000000'. Be careful there is a '#' symbol at the beginning of the order id.",
+                  "title": "Order Id",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "order_id"
+              ],
+              "title": "parameters",
+              "type": "object"
+            },
+            "inputSchemaHash": "1b48f665590c829dec7ef550d3a1887af14b1202f9a457007d171cb42370aea2",
+            "sideEffect": "write",
+            "timeoutMs": 10000
+          },
+          {
+            "name": "get_product_details",
+            "description": "Get the inventory details of a product.",
+            "inputSchema": {
+              "properties": {
+                "product_id": {
+                  "description": "The product id, such as '6086499569'. Be careful the product id is different from the item id.",
+                  "title": "Product Id",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "product_id"
+              ],
+              "title": "parameters",
+              "type": "object"
+            },
+            "inputSchemaHash": "b3e40378e809c6b0d1a71e92759ed266e368c31d85faf455202a1355754f49ea",
+            "sideEffect": "write",
+            "timeoutMs": 10000
+          },
+          {
+            "name": "get_item_details",
+            "description": "Get the inventory details of an item.",
+            "inputSchema": {
+              "properties": {
+                "item_id": {
+                  "description": "The item id, such as '6086499569'. Be careful the item id is different from the product id.",
+                  "title": "Item Id",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "item_id"
+              ],
+              "title": "parameters",
+              "type": "object"
+            },
+            "inputSchemaHash": "bedc02c798141149255a91fc8ed157666c35396adccd58fdcdbfd01cca1ad964",
+            "sideEffect": "write",
+            "timeoutMs": 10000
+          },
+          {
+            "name": "get_user_details",
+            "description": "Get the details of a user, including their orders.",
+            "inputSchema": {
+              "properties": {
+                "user_id": {
+                  "description": "The user id, such as 'sara_doe_496'.",
+                  "title": "User Id",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "user_id"
+              ],
+              "title": "parameters",
+              "type": "object"
+            },
+            "inputSchemaHash": "baea79076472342d26be86e2fe28e35d382096ee8ef792057933900f2d44b370",
+            "sideEffect": "write",
+            "timeoutMs": 10000
+          },
+          {
+            "name": "list_all_product_types",
+            "description": "List the name and product id of all product types.\n\nEach product type has a variety of different items with unique item ids and options.\nThere are only 50 product types in the store.",
+            "inputSchema": {
+              "properties": {},
+              "title": "parameters",
+              "type": "object"
+            },
+            "inputSchemaHash": "12c542c336d499edec5903cae4848b4c3c2b82a7640b31042d18ca1baf8f1ae9",
+            "sideEffect": "write",
+            "timeoutMs": 10000
+          },
+          {
+            "name": "modify_pending_order_address",
+            "description": "Modify the shipping address of a pending order. The agent needs to explain the modification detail and ask for explicit user confirmation (yes/no) to proceed.",
+            "inputSchema": {
+              "properties": {
+                "order_id": {
+                  "description": "The order id, such as '#W0000000'. Be careful there is a '#' symbol at the beginning of the order id.",
+                  "title": "Order Id",
+                  "type": "string"
+                },
+                "address1": {
+                  "description": "The first line of the address, such as '123 Main St'.",
+                  "title": "Address1",
+                  "type": "string"
+                },
+                "address2": {
+                  "description": "The second line of the address, such as 'Apt 1' or ''.",
+                  "title": "Address2",
+                  "type": "string"
+                },
+                "city": {
+                  "description": "The city, such as 'San Francisco'.",
+                  "title": "City",
+                  "type": "string"
+                },
+                "state": {
+                  "description": "The state, such as 'CA'.",
+                  "title": "State",
+                  "type": "string"
+                },
+                "country": {
+                  "description": "The country, such as 'USA'.",
+                  "title": "Country",
+                  "type": "string"
+                },
+                "zip": {
+                  "description": "The zip code, such as '12345'.",
+                  "title": "Zip",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "order_id",
+                "address1",
+                "address2",
+                "city",
+                "state",
+                "country",
+                "zip"
+              ],
+              "title": "parameters",
+              "type": "object"
+            },
+            "inputSchemaHash": "8bc46bd98755d2d5b65bd88d79780a4e8493bfe99f7f4012dcdd7aef78b6ae16",
+            "sideEffect": "write",
+            "timeoutMs": 10000
+          },
+          {
+            "name": "modify_pending_order_items",
+            "description": "Modify items in a pending order to new items of the same product type. For a pending order, this function can only be called once. The agent needs to explain the exchange detail and ask for explicit user confirmation (yes/no) to proceed.",
+            "inputSchema": {
+              "properties": {
+                "order_id": {
+                  "description": "The order id, such as '#W0000000'. Be careful there is a '#' symbol at the beginning of the order id.",
+                  "title": "Order Id",
+                  "type": "string"
+                },
+                "item_ids": {
+                  "description": "The item ids to be modified, each such as '1008292230'. There could be duplicate items in the list.",
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "Item Ids",
+                  "type": "array"
+                },
+                "new_item_ids": {
+                  "description": "The item ids to be modified for, each such as '1008292230'. There could be duplicate items in the list. Each new item id should match the item id in the same position and be of the same product.",
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "New Item Ids",
+                  "type": "array"
+                },
+                "payment_method_id": {
+                  "description": "The payment method id to pay or receive refund for the item price difference, such as 'gift_card_0000000' or 'credit_card_0000000'. These can be looked up from the user or order details.",
+                  "title": "Payment Method Id",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "order_id",
+                "item_ids",
+                "new_item_ids",
+                "payment_method_id"
+              ],
+              "title": "parameters",
+              "type": "object"
+            },
+            "inputSchemaHash": "ecf637f06c0f2a9661a2528c6fffa5d4caa3c31a6850bb68c65dd98462809a7d",
+            "sideEffect": "write",
+            "timeoutMs": 10000
+          },
+          {
+            "name": "modify_pending_order_payment",
+            "description": "Modify the payment method of a pending order. The agent needs to explain the modification detail and ask for explicit user confirmation (yes/no) to proceed.",
+            "inputSchema": {
+              "properties": {
+                "order_id": {
+                  "description": "The order id, such as '#W0000000'. Be careful there is a '#' symbol at the beginning of the order id.",
+                  "title": "Order Id",
+                  "type": "string"
+                },
+                "payment_method_id": {
+                  "description": "The payment method id to pay or receive refund for the item price difference, such as 'gift_card_0000000' or 'credit_card_0000000'. These can be looked up from the user or order details.",
+                  "title": "Payment Method Id",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "order_id",
+                "payment_method_id"
+              ],
+              "title": "parameters",
+              "type": "object"
+            },
+            "inputSchemaHash": "85dc33b9ea3dad91a32893cfd70f458d9de8781dfa3758d16cc438ad46ec120d",
+            "sideEffect": "write",
+            "timeoutMs": 10000
+          },
+          {
+            "name": "modify_user_address",
+            "description": "Modify the default address of a user. The agent needs to explain the modification detail and ask for explicit user confirmation (yes/no) to proceed.",
+            "inputSchema": {
+              "properties": {
+                "user_id": {
+                  "description": "The user id, such as 'sara_doe_496'.",
+                  "title": "User Id",
+                  "type": "string"
+                },
+                "address1": {
+                  "description": "The first line of the address, such as '123 Main St'.",
+                  "title": "Address1",
+                  "type": "string"
+                },
+                "address2": {
+                  "description": "The second line of the address, such as 'Apt 1' or ''.",
+                  "title": "Address2",
+                  "type": "string"
+                },
+                "city": {
+                  "description": "The city, such as 'San Francisco'.",
+                  "title": "City",
+                  "type": "string"
+                },
+                "state": {
+                  "description": "The state, such as 'CA'.",
+                  "title": "State",
+                  "type": "string"
+                },
+                "country": {
+                  "description": "The country, such as 'USA'.",
+                  "title": "Country",
+                  "type": "string"
+                },
+                "zip": {
+                  "description": "The zip code, such as '12345'.",
+                  "title": "Zip",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "user_id",
+                "address1",
+                "address2",
+                "city",
+                "state",
+                "country",
+                "zip"
+              ],
+              "title": "parameters",
+              "type": "object"
+            },
+            "inputSchemaHash": "0395e2809e8afd8b2bb84cb05b0c8adc9fd4ad5c134df962dbcdabd893835b90",
+            "sideEffect": "write",
+            "timeoutMs": 10000
+          },
+          {
+            "name": "return_delivered_order_items",
+            "description": "Return some items of a delivered order.\n\nThe order status will be changed to 'return requested'.\nThe agent needs to explain the return detail and ask for explicit user confirmation (yes/no) to proceed.\nThe user will receive follow-up email for how and where to return the item.",
+            "inputSchema": {
+              "properties": {
+                "order_id": {
+                  "description": "The order id, such as '#W0000000'. Be careful there is a '#' symbol at the beginning of the order id.",
+                  "title": "Order Id",
+                  "type": "string"
+                },
+                "item_ids": {
+                  "description": "The item ids to be returned, each such as '1008292230'. There could be duplicate items in the list.",
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "Item Ids",
+                  "type": "array"
+                },
+                "payment_method_id": {
+                  "description": "The payment method id to pay or receive refund for the item price difference, such as 'gift_card_0000000' or 'credit_card_0000000'.\nThese can be looked up from the user or order details.",
+                  "title": "Payment Method Id",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "order_id",
+                "item_ids",
+                "payment_method_id"
+              ],
+              "title": "parameters",
+              "type": "object"
+            },
+            "inputSchemaHash": "5a454c451e486af84f92727288e45fa2f1e9db4bdd8c0c65e223e6783149fa19",
+            "sideEffect": "write",
+            "timeoutMs": 10000
+          },
+          {
+            "name": "transfer_to_human_agents",
+            "description": "Transfer the user to a human agent, with a summary of the user's issue.\n\nOnly transfer if\n -  the user explicitly asks for a human agent\n -  given the policy and the available tools, you cannot solve the user's issue.",
+            "inputSchema": {
+              "properties": {
+                "summary": {
+                  "description": "A summary of the user's issue.",
+                  "title": "Summary",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "summary"
+              ],
+              "title": "parameters",
+              "type": "object"
+            },
+            "inputSchemaHash": "de4bb70297072b49c347021b043c040957180bbe21df16adaeba0a829d63df5c",
+            "sideEffect": "write",
+            "timeoutMs": 10000
+          }
+        ],
+        "capabilities": [],
+        "verifierSetRelease": {
+          "id": "tau-retail-native-verifiers",
+          "contentHash": "a26b48573121dc0ff9e3665799dd8dc5490450bc5e42eec943c77c24c0605edd"
+        }
+      },
+      "contentHash": "884873897ee9f6cce0ee100380d99fe7097876d5d9115655bc8a6eed77cfe0d7"
+    },
+    "rewardBinding": {
+      "schemaVersion": "openpond.rewardBinding.v1",
+      "id": "tau-retail-native-grading",
+      "revision": 1,
+      "name": "τ Retail native grading",
+      "sources": [
+        {
+          "graderId": "tau-retail-native-db",
+          "reward": {
+            "id": "tau-retail-native-db",
+            "contentHash": "1452b139be550609034bab1b179f313b4e7b034026e1c4306e3685f756e8988c",
+            "revision": 1
+          },
+          "role": "training",
+          "normalization": {
+            "kind": "identity"
+          },
+          "weight": 1,
+          "required": true,
+          "hardGate": true,
+          "privileged": true,
+          "fixtureRefs": []
+        }
+      ],
+      "aggregation": "weighted_mean",
+      "unscorable": "exclude_optional_require_all_required",
+      "contentHash": "7ac39325713fdc98f845bf543c91de890ec26f43e9d0d029df98cf9b76abef69"
+    },
+    "rewards": [
+      {
+        "schemaVersion": "openpond.rewardRelease.v1",
+        "id": "tau-retail-native-db",
+        "revision": 1,
+        "name": "τ Retail native database grader",
+        "description": "Recomputes the pinned upstream native database evaluator from the host-recorded conversation and private task. Requires the executable τ profile runtime.",
+        "implementation": {
+          "kind": "custom_verifier",
+          "runtime": "sandbox_process",
+          "verifierRef": {
+            "id": "asset-240b3b9547fda5d0edd27df4c88a5c39196fd297f9c0f5bc64a996b5881be14e-d8e575d14d498425",
+            "path": "graders/verify.mjs",
+            "contentHash": "240b3b9547fda5d0edd27df4c88a5c39196fd297f9c0f5bc64a996b5881be14e",
+            "sizeBytes": 821,
+            "mediaType": "application/javascript",
+            "visibility": "verifier"
+          },
+          "exportName": "verify",
+          "timeoutMs": 30000,
+          "networkPolicy": "none"
+        },
+        "rawScore": {
+          "minimum": 0,
+          "maximum": 1
+        },
+        "assets": [
+          {
+            "id": "asset-240b3b9547fda5d0edd27df4c88a5c39196fd297f9c0f5bc64a996b5881be14e-d8e575d14d498425",
+            "path": "graders/verify.mjs",
+            "contentHash": "240b3b9547fda5d0edd27df4c88a5c39196fd297f9c0f5bc64a996b5881be14e",
+            "sizeBytes": 821,
+            "mediaType": "application/javascript",
+            "visibility": "verifier"
+          },
+          {
+            "id": "asset-9948ce7247a89c4d8eb9a0e7b6f6ea1f38a12625a5d3b6f6432f46c8a4f45541-6a1bec9e8c19c4d6",
+            "path": "graders/verify.py",
+            "contentHash": "9948ce7247a89c4d8eb9a0e7b6f6ea1f38a12625a5d3b6f6432f46c8a4f45541",
+            "sizeBytes": 985,
+            "mediaType": "text/x-python",
+            "visibility": "verifier"
+          }
+        ],
+        "contentHash": "1452b139be550609034bab1b179f313b4e7b034026e1c4306e3685f756e8988c"
+      }
+    ],
+    "assets": [
+      {
+        "schemaVersion": "openpond.learningTextAsset.v1",
+        "id": "asset-240b3b9547fda5d0edd27df4c88a5c39196fd297f9c0f5bc64a996b5881be14e-d8e575d14d498425",
+        "revision": 1,
+        "asset": {
+          "id": "asset-240b3b9547fda5d0edd27df4c88a5c39196fd297f9c0f5bc64a996b5881be14e-d8e575d14d498425",
+          "path": "graders/verify.mjs",
+          "contentHash": "240b3b9547fda5d0edd27df4c88a5c39196fd297f9c0f5bc64a996b5881be14e",
+          "sizeBytes": 821,
+          "mediaType": "application/javascript",
+          "visibility": "verifier"
+        },
+        "text": "import { spawnSync } from 'node:child_process';\nimport { fileURLToPath } from 'node:url';\n\n// The declared profile runtime supplies pinned tau2 + data and Python dependencies.\n// Missing runtime dependencies are execution errors, never a passing/zero grade.\nexport function verify(value) {\n  if (!value?.expected?.task || !value?.evaluatorContext?.simulation) throw new Error('Host-recorded native simulation and private task are required');\n  const result = spawnSync('python3', [fileURLToPath(new URL('./verify.py', import.meta.url))], {\n    input: JSON.stringify(value), encoding: 'utf8', timeout: 25000, maxBuffer: 1048576,\n    env: { ...process.env, PYTHON_DOTENV_DISABLED: '1' },\n  });\n  if (result.error || result.status !== 0) throw new Error('Native tau evaluator failed');\n  return JSON.parse(result.stdout);\n}\n",
+        "contentHash": "c7dc7643cff96110e06eab6a5ecda0515e37dcfca72ff6ced9a0703ca6e3d32f"
+      },
+      {
+        "schemaVersion": "openpond.learningTextAsset.v1",
+        "id": "asset-9948ce7247a89c4d8eb9a0e7b6f6ea1f38a12625a5d3b6f6432f46c8a4f45541-6a1bec9e8c19c4d6",
+        "revision": 1,
+        "asset": {
+          "id": "asset-9948ce7247a89c4d8eb9a0e7b6f6ea1f38a12625a5d3b6f6432f46c8a4f45541-6a1bec9e8c19c4d6",
+          "path": "graders/verify.py",
+          "contentHash": "9948ce7247a89c4d8eb9a0e7b6f6ea1f38a12625a5d3b6f6432f46c8a4f45541",
+          "sizeBytes": 985,
+          "mediaType": "text/x-python",
+          "visibility": "verifier"
+        },
+        "text": "\"\"\"Recompute native grading from host-recorded simulation, never model scores.\"\"\"\nimport json\nimport os\nimport sys\nos.environ['PYTHON_DOTENV_DISABLED'] = '1'\nfrom loguru import logger\nlogger.remove()\nfrom tau2.data_model.tasks import Task\nfrom tau2.data_model.simulation import SimulationRun\nfrom tau2.evaluator.evaluator import evaluate_simulation, EvaluationType\n\nvalue = json.load(sys.stdin)\ntask = Task.model_validate(value['expected']['task'])\nsimulation = SimulationRun.model_validate(value['evaluatorContext']['simulation'])\nif simulation.task_id != task.id:\n    raise ValueError('Simulation belongs to another task')\nif [x.value for x in task.evaluation_criteria.reward_basis] != ['DB']:\n    raise ValueError('Unsupported grading requirements')\nresult = evaluate_simulation(simulation, task, EvaluationType.ALL, False, 'retail')\nprint(json.dumps({'score': result.reward, 'passed': result.reward == 1, 'feedback': 'Native tau retail database evaluation.', 'evidenceRefs': []}))\n",
+        "contentHash": "057d65a7681351a75ade7e463336f21397c6a12526f03bf611b3e8ccf4be9f8c"
+      }
+    ]
+  },
+  "contentHash": "a767e195c39e794a2a802652a78944a6b7c6bef2e48ec6a4c619c222e0eda6ca"
+}
