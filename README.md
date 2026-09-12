@@ -70,6 +70,14 @@ Retail tool schemas and policy are loaded from τ, not reimplemented here. The l
 
 The inspection artifact schema is local to this profile. It is **not** a new canonical OpenPond Taskset format. Mapping selected cases into existing Task packages, publishing immutable Profile references, Models UI attachment and managed RL admission are the next design review. Do not treat these local artifacts as already-admitted training inputs.
 
+## Managed pipeline attachment
+
+`python/managed_runtime.py` implements the existing `openpond.managedRlJsonlRuntime.v1` init/step/terminate protocol. It supplies native retail tools, advances the Fireworks customer and returns native reward components. The managed pipeline owns the acting policy requests, token/log-probability evidence and per-turn training samples; the profile must not call the fixed Fireworks acting model when used in this lane.
+
+The production OpenPond `executePortableJsonlTraining` adapter has been exercised against this wrapper with a scripted customer and privileged reference policy. Seven policy turns produced a v2 local Harness receipt with native reward 1 and per-turn request/sample identities. This is explicitly an offline adapter-contract fixture, not an actual hosted job or optimizer update. The verification script accepts an OpenPond source checkout path: `scripts/verify-managed.mts`.
+
+Canonical Task/package materialization, immutable dependency admission, separate train/evaluation cases, live simulator usage qualification and an actual managed job remain unfinished. Cases 33/34 share a customer/store scenario and must not be presented as independent held-out generalization evidence.
+
 ## Checks
 
 ```bash

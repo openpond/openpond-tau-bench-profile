@@ -8,5 +8,5 @@
     "skipLibCheck": true,
     "types": ["node"]
   },
-  "include": ["agents/**/*.ts", "scripts/**/*.ts"]
+  "include": ["agents/**/*.ts", "scripts/**/*.ts", "scripts/**/*.mts"]
 }
