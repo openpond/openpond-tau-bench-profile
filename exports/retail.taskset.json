@@ -36,7 +36,7 @@
     },
     "environmentRelease": {
       "id": "tau-retail-profile-environment",
-      "contentHash": "e2b8b15a32ef2156134f2c0d6c0909f38718a6e3089769e2b9d567def2443040"
+      "contentHash": "7ce2183655c812063b649eccc3b49805ba8fa38ecfad2e62836e2b92bf1b2ab0"
     },
     "tools": [
       {
@@ -782,10 +782,10 @@
         "kind": "custom_verifier",
         "runtime": "sandbox_process",
         "verifierRef": {
-          "id": "asset-240b3b9547fda5d0edd27df4c88a5c39196fd297f9c0f5bc64a996b5881be14e-d8e575d14d498425",
+          "id": "asset-f81481a824c7ee9f716f06b5dcd913979fae8597781c7f6c05a4ec4a938e8cd8-d8e575d14d498425",
           "path": "graders/verify.mjs",
-          "contentHash": "240b3b9547fda5d0edd27df4c88a5c39196fd297f9c0f5bc64a996b5881be14e",
-          "sizeBytes": 821,
+          "contentHash": "f81481a824c7ee9f716f06b5dcd913979fae8597781c7f6c05a4ec4a938e8cd8",
+          "sizeBytes": 883,
           "mediaType": "application/javascript",
           "visibility": "verifier"
         },
@@ -796,7 +796,7 @@
     ],
     "verifierSetRelease": {
       "id": "tau-retail-native-verifiers",
-      "contentHash": "a26b48573121dc0ff9e3665799dd8dc5490450bc5e42eec943c77c24c0605edd"
+      "contentHash": "030e506ed4866c9c563b326d9a71a5280f97a1a52dc50d384a2082721455158c"
     },
     "metadata": {
       "taskPreviews": {
@@ -824,18 +824,18 @@
       "starter": {
         "taskDefinition": {
           "id": "tau-retail-profile-tasks",
-          "contentHash": "884873897ee9f6cce0ee100380d99fe7097876d5d9115655bc8a6eed77cfe0d7",
+          "contentHash": "4a9948c7bf8aa3fde05e895496e9328edcbb4f3edc47bc407a8890334ee49363",
           "revision": 1
         },
         "rewardBinding": {
           "id": "tau-retail-native-grading",
-          "contentHash": "7ac39325713fdc98f845bf543c91de890ec26f43e9d0d029df98cf9b76abef69",
+          "contentHash": "6de482c6dcbf7ac0e7d95501de3cabb96e4f5d072f45ac447e5bcfba4093ebfe",
           "revision": 1
         }
       },
       "profile": {
         "repository": "openpond/openpond-tau-bench-profile",
-        "revision": "0abc1b9e6458f455f853cebce995cdfce7359183",
+        "revision": "ebb68f47014492762ac55c72236ecd7d8c91b6d7",
         "profile": "tau-retail",
         "agent": "retail",
         "action": "run-task",
@@ -849,7 +849,7 @@
       "executionStatus": "requires_profile_task_runtime",
       "demoOnly": true
     },
-    "contentHash": "449c6f54d8235927d09c78e0a6d7d5e179d70f31c2865d60c90703ef7252251a"
+    "contentHash": "ae15f364ba5a6dee1776ce4c143fdd979ddbce6bee08afe9d052cd20324b273b"
   },
   "environment": {
     "schemaVersion": "openpond.environmentRelease.v1",
@@ -882,7 +882,7 @@
     "metadata": {
       "profile": {
         "repository": "openpond/openpond-tau-bench-profile",
-        "revision": "0abc1b9e6458f455f853cebce995cdfce7359183",
+        "revision": "ebb68f47014492762ac55c72236ecd7d8c91b6d7",
         "profile": "tau-retail",
         "agent": "retail",
         "action": "run-task",
@@ -890,7 +890,7 @@
       },
       "executionStatus": "requires_profile_task_runtime"
     },
-    "contentHash": "e2b8b15a32ef2156134f2c0d6c0909f38718a6e3089769e2b9d567def2443040"
+    "contentHash": "7ce2183655c812063b649eccc3b49805ba8fa38ecfad2e62836e2b92bf1b2ab0"
   },
   "verifierSet": {
     "schemaVersion": "openpond.verifierSetRelease.v1",
@@ -907,10 +907,10 @@
         "kind": "custom_verifier",
         "runtime": "sandbox_process",
         "verifierRef": {
-          "id": "asset-240b3b9547fda5d0edd27df4c88a5c39196fd297f9c0f5bc64a996b5881be14e-d8e575d14d498425",
+          "id": "asset-f81481a824c7ee9f716f06b5dcd913979fae8597781c7f6c05a4ec4a938e8cd8-d8e575d14d498425",
           "path": "graders/verify.mjs",
-          "contentHash": "240b3b9547fda5d0edd27df4c88a5c39196fd297f9c0f5bc64a996b5881be14e",
-          "sizeBytes": 821,
+          "contentHash": "f81481a824c7ee9f716f06b5dcd913979fae8597781c7f6c05a4ec4a938e8cd8",
+          "sizeBytes": 883,
           "mediaType": "application/javascript",
           "visibility": "verifier"
         },
@@ -928,26 +928,26 @@
     "metadata": {
       "profile": {
         "repository": "openpond/openpond-tau-bench-profile",
-        "revision": "0abc1b9e6458f455f853cebce995cdfce7359183",
+        "revision": "ebb68f47014492762ac55c72236ecd7d8c91b6d7",
         "profile": "tau-retail",
         "agent": "retail",
         "action": "run-task",
         "upstreamRevision": "672227c6b6676edc20d57ea53b7000262aae77b9"
       }
     },
-    "contentHash": "a26b48573121dc0ff9e3665799dd8dc5490450bc5e42eec943c77c24c0605edd"
+    "contentHash": "030e506ed4866c9c563b326d9a71a5280f97a1a52dc50d384a2082721455158c"
   },
   "files": [
     {
       "asset": {
-        "id": "asset-240b3b9547fda5d0edd27df4c88a5c39196fd297f9c0f5bc64a996b5881be14e-d8e575d14d498425",
+        "id": "asset-f81481a824c7ee9f716f06b5dcd913979fae8597781c7f6c05a4ec4a938e8cd8-d8e575d14d498425",
         "path": "graders/verify.mjs",
-        "contentHash": "240b3b9547fda5d0edd27df4c88a5c39196fd297f9c0f5bc64a996b5881be14e",
-        "sizeBytes": 821,
+        "contentHash": "f81481a824c7ee9f716f06b5dcd913979fae8597781c7f6c05a4ec4a938e8cd8",
+        "sizeBytes": 883,
         "mediaType": "application/javascript",
         "visibility": "verifier"
       },
-      "base64": "aW1wb3J0IHsgc3Bhd25TeW5jIH0gZnJvbSAnbm9kZTpjaGlsZF9wcm9jZXNzJzsKaW1wb3J0IHsgZmlsZVVSTFRvUGF0aCB9IGZyb20gJ25vZGU6dXJsJzsKCi8vIFRoZSBkZWNsYXJlZCBwcm9maWxlIHJ1bnRpbWUgc3VwcGxpZXMgcGlubmVkIHRhdTIgKyBkYXRhIGFuZCBQeXRob24gZGVwZW5kZW5jaWVzLgovLyBNaXNzaW5nIHJ1bnRpbWUgZGVwZW5kZW5jaWVzIGFyZSBleGVjdXRpb24gZXJyb3JzLCBuZXZlciBhIHBhc3NpbmcvemVybyBncmFkZS4KZXhwb3J0IGZ1bmN0aW9uIHZlcmlmeSh2YWx1ZSkgewogIGlmICghdmFsdWU/LmV4cGVjdGVkPy50YXNrIHx8ICF2YWx1ZT8uZXZhbHVhdG9yQ29udGV4dD8uc2ltdWxhdGlvbikgdGhyb3cgbmV3IEVycm9yKCdIb3N0LXJlY29yZGVkIG5hdGl2ZSBzaW11bGF0aW9uIGFuZCBwcml2YXRlIHRhc2sgYXJlIHJlcXVpcmVkJyk7CiAgY29uc3QgcmVzdWx0ID0gc3Bhd25TeW5jKCdweXRob24zJywgW2ZpbGVVUkxUb1BhdGgobmV3IFVSTCgnLi92ZXJpZnkucHknLCBpbXBvcnQubWV0YS51cmwpKV0sIHsKICAgIGlucHV0OiBKU09OLnN0cmluZ2lmeSh2YWx1ZSksIGVuY29kaW5nOiAndXRmOCcsIHRpbWVvdXQ6IDI1MDAwLCBtYXhCdWZmZXI6IDEwNDg1NzYsCiAgICBlbnY6IHsgLi4ucHJvY2Vzcy5lbnYsIFBZVEhPTl9ET1RFTlZfRElTQUJMRUQ6ICcxJyB9LAogIH0pOwogIGlmIChyZXN1bHQuZXJyb3IgfHwgcmVzdWx0LnN0YXR1cyAhPT0gMCkgdGhyb3cgbmV3IEVycm9yKCdOYXRpdmUgdGF1IGV2YWx1YXRvciBmYWlsZWQnKTsKICByZXR1cm4gSlNPTi5wYXJzZShyZXN1bHQuc3Rkb3V0KTsKfQo="
+      "base64": "aW1wb3J0IHsgc3Bhd25TeW5jIH0gZnJvbSAibm9kZTpjaGlsZF9wcm9jZXNzIjsKaW1wb3J0IHsgZmlsZVVSTFRvUGF0aCB9IGZyb20gIm5vZGU6dXJsIjsKCi8vIFRoZSBkZWNsYXJlZCBwcm9maWxlIHJ1bnRpbWUgc3VwcGxpZXMgcGlubmVkIHRhdTIgKyBkYXRhIGFuZCBQeXRob24gZGVwZW5kZW5jaWVzLgovLyBNaXNzaW5nIHJ1bnRpbWUgZGVwZW5kZW5jaWVzIGFyZSBleGVjdXRpb24gZXJyb3JzLCBuZXZlciBhIHBhc3NpbmcvemVybyBncmFkZS4KZXhwb3J0IGZ1bmN0aW9uIHZlcmlmeSh2YWx1ZSkgewogIGlmICghdmFsdWU/LmV4cGVjdGVkPy50YXNrIHx8ICF2YWx1ZT8uZXZhbHVhdG9yQ29udGV4dD8uc2ltdWxhdGlvbikKICAgIHRocm93IG5ldyBFcnJvcigKICAgICAgIkhvc3QtcmVjb3JkZWQgbmF0aXZlIHNpbXVsYXRpb24gYW5kIHByaXZhdGUgdGFzayBhcmUgcmVxdWlyZWQiLAogICAgKTsKICBjb25zdCByZXN1bHQgPSBzcGF3blN5bmMoCiAgICAicHl0aG9uMyIsCiAgICBbZmlsZVVSTFRvUGF0aChuZXcgVVJMKCIuL3ZlcmlmeS5weSIsIGltcG9ydC5tZXRhLnVybCkpXSwKICAgIHsKICAgICAgaW5wdXQ6IEpTT04uc3RyaW5naWZ5KHZhbHVlKSwKICAgICAgZW5jb2Rpbmc6ICJ1dGY4IiwKICAgICAgdGltZW91dDogMjUwMDAsCiAgICAgIG1heEJ1ZmZlcjogMTA0ODU3NiwKICAgICAgZW52OiB7IC4uLnByb2Nlc3MuZW52LCBQWVRIT05fRE9URU5WX0RJU0FCTEVEOiAiMSIgfSwKICAgIH0sCiAgKTsKICBpZiAocmVzdWx0LmVycm9yIHx8IHJlc3VsdC5zdGF0dXMgIT09IDApCiAgICB0aHJvdyBuZXcgRXJyb3IoIk5hdGl2ZSB0YXUgZXZhbHVhdG9yIGZhaWxlZCIpOwogIHJldHVybiBKU09OLnBhcnNlKHJlc3VsdC5zdGRvdXQpOwp9Cg=="
     },
     {
       "asset": {
@@ -988,7 +988,7 @@
       },
       "rewardBinding": {
         "id": "tau-retail-native-grading",
-        "contentHash": "7ac39325713fdc98f845bf543c91de890ec26f43e9d0d029df98cf9b76abef69",
+        "contentHash": "6de482c6dcbf7ac0e7d95501de3cabb96e4f5d072f45ac447e5bcfba4093ebfe",
         "revision": 1
       },
       "harness": null,
@@ -1025,7 +1025,7 @@
         },
         "environmentRelease": {
           "id": "tau-retail-profile-environment",
-          "contentHash": "e2b8b15a32ef2156134f2c0d6c0909f38718a6e3089769e2b9d567def2443040"
+          "contentHash": "7ce2183655c812063b649eccc3b49805ba8fa38ecfad2e62836e2b92bf1b2ab0"
         },
         "tools": [
           {
@@ -1518,10 +1518,10 @@
         "capabilities": [],
         "verifierSetRelease": {
           "id": "tau-retail-native-verifiers",
-          "contentHash": "a26b48573121dc0ff9e3665799dd8dc5490450bc5e42eec943c77c24c0605edd"
+          "contentHash": "030e506ed4866c9c563b326d9a71a5280f97a1a52dc50d384a2082721455158c"
         }
       },
-      "contentHash": "884873897ee9f6cce0ee100380d99fe7097876d5d9115655bc8a6eed77cfe0d7"
+      "contentHash": "4a9948c7bf8aa3fde05e895496e9328edcbb4f3edc47bc407a8890334ee49363"
     },
     "rewardBinding": {
       "schemaVersion": "openpond.rewardBinding.v1",
@@ -1533,7 +1533,7 @@
           "graderId": "tau-retail-native-db",
           "reward": {
             "id": "tau-retail-native-db",
-            "contentHash": "1452b139be550609034bab1b179f313b4e7b034026e1c4306e3685f756e8988c",
+            "contentHash": "de846c514acd632ebe6106b42b414ea3c3fee3e22a218a9e4e10fa7c93fc208a",
             "revision": 1
           },
           "role": "training",
@@ -1549,7 +1549,7 @@
       ],
       "aggregation": "weighted_mean",
       "unscorable": "exclude_optional_require_all_required",
-      "contentHash": "7ac39325713fdc98f845bf543c91de890ec26f43e9d0d029df98cf9b76abef69"
+      "contentHash": "6de482c6dcbf7ac0e7d95501de3cabb96e4f5d072f45ac447e5bcfba4093ebfe"
     },
     "rewards": [
       {
@@ -1562,10 +1562,10 @@
           "kind": "custom_verifier",
           "runtime": "sandbox_process",
           "verifierRef": {
-            "id": "asset-240b3b9547fda5d0edd27df4c88a5c39196fd297f9c0f5bc64a996b5881be14e-d8e575d14d498425",
+            "id": "asset-f81481a824c7ee9f716f06b5dcd913979fae8597781c7f6c05a4ec4a938e8cd8-d8e575d14d498425",
             "path": "graders/verify.mjs",
-            "contentHash": "240b3b9547fda5d0edd27df4c88a5c39196fd297f9c0f5bc64a996b5881be14e",
-            "sizeBytes": 821,
+            "contentHash": "f81481a824c7ee9f716f06b5dcd913979fae8597781c7f6c05a4ec4a938e8cd8",
+            "sizeBytes": 883,
             "mediaType": "application/javascript",
             "visibility": "verifier"
           },
@@ -1579,10 +1579,10 @@
         },
         "assets": [
           {
-            "id": "asset-240b3b9547fda5d0edd27df4c88a5c39196fd297f9c0f5bc64a996b5881be14e-d8e575d14d498425",
+            "id": "asset-f81481a824c7ee9f716f06b5dcd913979fae8597781c7f6c05a4ec4a938e8cd8-d8e575d14d498425",
             "path": "graders/verify.mjs",
-            "contentHash": "240b3b9547fda5d0edd27df4c88a5c39196fd297f9c0f5bc64a996b5881be14e",
-            "sizeBytes": 821,
+            "contentHash": "f81481a824c7ee9f716f06b5dcd913979fae8597781c7f6c05a4ec4a938e8cd8",
+            "sizeBytes": 883,
             "mediaType": "application/javascript",
             "visibility": "verifier"
           },
@@ -1595,24 +1595,24 @@
             "visibility": "verifier"
           }
         ],
-        "contentHash": "1452b139be550609034bab1b179f313b4e7b034026e1c4306e3685f756e8988c"
+        "contentHash": "de846c514acd632ebe6106b42b414ea3c3fee3e22a218a9e4e10fa7c93fc208a"
       }
     ],
     "assets": [
       {
         "schemaVersion": "openpond.learningTextAsset.v1",
-        "id": "asset-240b3b9547fda5d0edd27df4c88a5c39196fd297f9c0f5bc64a996b5881be14e-d8e575d14d498425",
+        "id": "asset-f81481a824c7ee9f716f06b5dcd913979fae8597781c7f6c05a4ec4a938e8cd8-d8e575d14d498425",
         "revision": 1,
         "asset": {
-          "id": "asset-240b3b9547fda5d0edd27df4c88a5c39196fd297f9c0f5bc64a996b5881be14e-d8e575d14d498425",
+          "id": "asset-f81481a824c7ee9f716f06b5dcd913979fae8597781c7f6c05a4ec4a938e8cd8-d8e575d14d498425",
           "path": "graders/verify.mjs",
-          "contentHash": "240b3b9547fda5d0edd27df4c88a5c39196fd297f9c0f5bc64a996b5881be14e",
-          "sizeBytes": 821,
+          "contentHash": "f81481a824c7ee9f716f06b5dcd913979fae8597781c7f6c05a4ec4a938e8cd8",
+          "sizeBytes": 883,
           "mediaType": "application/javascript",
           "visibility": "verifier"
         },
-        "text": "import { spawnSync } from 'node:child_process';\nimport { fileURLToPath } from 'node:url';\n\n// The declared profile runtime supplies pinned tau2 + data and Python dependencies.\n// Missing runtime dependencies are execution errors, never a passing/zero grade.\nexport function verify(value) {\n  if (!value?.expected?.task || !value?.evaluatorContext?.simulation) throw new Error('Host-recorded native simulation and private task are required');\n  const result = spawnSync('python3', [fileURLToPath(new URL('./verify.py', import.meta.url))], {\n    input: JSON.stringify(value), encoding: 'utf8', timeout: 25000, maxBuffer: 1048576,\n    env: { ...process.env, PYTHON_DOTENV_DISABLED: '1' },\n  });\n  if (result.error || result.status !== 0) throw new Error('Native tau evaluator failed');\n  return JSON.parse(result.stdout);\n}\n",
-        "contentHash": "c7dc7643cff96110e06eab6a5ecda0515e37dcfca72ff6ced9a0703ca6e3d32f"
+        "text": "import { spawnSync } from \"node:child_process\";\nimport { fileURLToPath } from \"node:url\";\n\n// The declared profile runtime supplies pinned tau2 + data and Python dependencies.\n// Missing runtime dependencies are execution errors, never a passing/zero grade.\nexport function verify(value) {\n  if (!value?.expected?.task || !value?.evaluatorContext?.simulation)\n    throw new Error(\n      \"Host-recorded native simulation and private task are required\",\n    );\n  const result = spawnSync(\n    \"python3\",\n    [fileURLToPath(new URL(\"./verify.py\", import.meta.url))],\n    {\n      input: JSON.stringify(value),\n      encoding: \"utf8\",\n      timeout: 25000,\n      maxBuffer: 1048576,\n      env: { ...process.env, PYTHON_DOTENV_DISABLED: \"1\" },\n    },\n  );\n  if (result.error || result.status !== 0)\n    throw new Error(\"Native tau evaluator failed\");\n  return JSON.parse(result.stdout);\n}\n",
+        "contentHash": "935f6bb787deab266f12d99c6f6ac8864ff1e74efd38b25594a484c7e35a0e10"
       },
       {
         "schemaVersion": "openpond.learningTextAsset.v1",
@@ -1631,5 +1631,5 @@
       }
     ]
   },
-  "contentHash": "a767e195c39e794a2a802652a78944a6b7c6bef2e48ec6a4c619c222e0eda6ca"
+  "contentHash": "362237496c947c5ec249877291b6a38a7aad05132da0a3c89608afff24bc26d8"
 }
