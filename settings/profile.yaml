@@ -1,0 +1,8 @@
+schema: openpond.profile.v1
+profile: tau-retail
+agents:
+  - id: retail
+    path: agents/retail
+    name: τ Retail
+    displayName: τ Retail
+    enabled: true

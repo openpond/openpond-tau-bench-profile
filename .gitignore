@@ -1,0 +1,9 @@
+node_modules/
+.venv/
+vendor/
+.openpond/
+artifacts/
+__pycache__/
+*.pyc
+.env
+.env.*

@@ -1,0 +1,12 @@
+{
+  "schema": "openpond.profileRepo.v1",
+  "defaultProfile": "tau-retail",
+  "profiles": {
+    "tau-retail": {
+      "path": ".",
+      "defaultAgent": "retail",
+      "enabledAgents": ["retail"],
+      "agentNames": { "retail": "τ Retail" }
+    }
+  }
+}

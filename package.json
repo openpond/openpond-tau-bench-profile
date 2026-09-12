@@ -1,0 +1,30 @@
+{
+  "name": "openpond-tau",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "agents/*"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "bun test tests",
+    "agent:inspect": "cd agents/retail && openpond-agent inspect --json",
+    "agent:build": "cd agents/retail && openpond-agent build",
+    "agent:validate": "cd agents/retail && openpond-agent validate --json",
+    "agent:eval": "cd agents/retail && openpond-agent eval --json",
+    "inspect": "bun scripts/inspect.ts",
+    "test:protocol": ".venv/bin/python -m unittest discover -s tests -p 'test_*.py'",
+    "check": "bun run typecheck && bun test tests && bun run test:protocol && bun run agent:build && bun run agent:validate && bun run agent:eval"
+  },
+  "dependencies": {
+    "@openpond/harness": "0.3.0",
+    "openpond-agent-sdk": "0.1.4",
+    "zod": "4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.3",
+    "prettier": "3.6.2",
+    "typescript": "5.9.3"
+  }
+}

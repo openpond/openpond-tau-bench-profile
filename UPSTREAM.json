@@ -1,0 +1,7 @@
+{
+  "repository": "https://github.com/sierra-research/tau2-bench",
+  "revision": "672227c6b6676edc20d57ea53b7000262aae77b9",
+  "license": "MIT",
+  "qualifiedExecutionSubset": ["33", "34"],
+  "qualification": "native DB fixture execution; live customer/model calls require separate verification"
+}
