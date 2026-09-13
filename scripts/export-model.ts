@@ -17,7 +17,7 @@ import {
   RewardReleaseSchema,
 } from "@openpond/evals/rewards";
 import { TasksetReleaseSchema } from "@openpond/evals/tasksets";
-import { contentHash } from "@openpond/harness";
+import { contentHash, sha256 } from "@openpond/harness";
 import { validateModelTasksetPackage } from "openpond-sdk/model-starters";
 import { createTasksetPackage } from "openpond-sdk/taskset-packages";
 import {
@@ -55,6 +55,26 @@ function mediaType(path: string) {
   if (path.endsWith(".toml")) return "application/toml";
   if (path.endsWith(".md")) return "text/markdown";
   return "text/plain";
+}
+
+async function runtimeAsset(path: string) {
+  const text = await readFile(`${root}/${path}`, "utf8");
+  const hash = sha256(text);
+  return {
+    asset: {
+      id: `asset-${hash}-${contentHash({
+        path,
+        mediaType: mediaType(path),
+        visibility: "host_private",
+      }).slice(0, 16)}`,
+      path,
+      contentHash: hash,
+      sizeBytes: Buffer.byteLength(text),
+      mediaType: mediaType(path),
+      visibility: "host_private" as const,
+    },
+    text,
+  };
 }
 
 const profileRevision = execFileSync("git", ["rev-parse", "HEAD"], {
@@ -123,14 +143,7 @@ const runtimePaths = [
   ...(await filesUnder("vendor/tau2-bench/src/tau2")),
 ];
 const runtimeAssets = await Promise.all(
-  runtimePaths.map(async (path) =>
-    createLearningTextAsset({
-      path,
-      text: await readFile(`${root}/${path}`, "utf8"),
-      mediaType: mediaType(path),
-      visibility: "host_private",
-    }),
-  ),
+  runtimePaths.map(runtimeAsset),
 );
 const runtimeModule = runtimeAssets.find(
   (asset) => asset.asset.path === runtimeModulePath,
@@ -317,7 +330,7 @@ const model = validateModelTasksetPackage({
   taskDefinition: definition,
   rewardBinding: binding,
   rewards: [reward],
-  assets,
+  assets: verifierAssets,
   executionResources: { environment, verifierSet },
 });
 const {
