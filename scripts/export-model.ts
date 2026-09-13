@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { readFile, mkdir, writeFile } from "node:fs/promises";
+import { readFile, mkdir, readdir, writeFile } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
 import {
   EnvironmentReleaseSchema,
@@ -34,6 +34,27 @@ function release<T extends { contentHash: string }>(
   const parsed = schema.parse(sealLearningContent(value));
   const { contentHash: _hash, ...content } = parsed;
   return schema.parse(sealLearningContent(content));
+}
+
+async function filesUnder(directory: string): Promise<string[]> {
+  const entries = await readdir(`${root}/${directory}`, {
+    withFileTypes: true,
+  });
+  const files = await Promise.all(
+    entries.map(async (entry) => {
+      const relative = `${directory}/${entry.name}`;
+      return entry.isDirectory() ? filesUnder(relative) : [relative];
+    }),
+  );
+  return files.flat().sort();
+}
+
+function mediaType(path: string) {
+  if (path.endsWith(".json")) return "application/json";
+  if (path.endsWith(".py")) return "text/x-python";
+  if (path.endsWith(".toml")) return "application/toml";
+  if (path.endsWith(".md")) return "text/markdown";
+  return "text/plain";
 }
 
 const profileRevision = execFileSync("git", ["rev-parse", "HEAD"], {
@@ -74,7 +95,7 @@ const cases = await Promise.all(
     ),
 );
 const instructions = cases[0]!.policy.trim();
-const assets = await Promise.all(
+const verifierAssets = await Promise.all(
   ["verify.mjs", "verify.py"].map(async (file) =>
     createLearningTextAsset({
       path: `graders/${file}`,
@@ -86,6 +107,53 @@ const assets = await Promise.all(
     }),
   ),
 );
+const runtimeModulePath = "python/managed_runtime.py";
+const runtimePaths = [
+  "python/bridge.py",
+  runtimeModulePath,
+  "requirements.lock",
+  "UPSTREAM.json",
+  "vendor/tau2-bench/LICENSE",
+  "vendor/tau2-bench/README.md",
+  "vendor/tau2-bench/pyproject.toml",
+  "vendor/tau2-bench/data/tau2/domains/retail/db.json",
+  "vendor/tau2-bench/data/tau2/domains/retail/policy.md",
+  "vendor/tau2-bench/data/tau2/domains/retail/split_tasks.json",
+  "vendor/tau2-bench/data/tau2/domains/retail/tasks.json",
+  ...(await filesUnder("vendor/tau2-bench/src/tau2")),
+];
+const runtimeAssets = await Promise.all(
+  runtimePaths.map(async (path) =>
+    createLearningTextAsset({
+      path,
+      text: await readFile(`${root}/${path}`, "utf8"),
+      mediaType: mediaType(path),
+      visibility: "host_private",
+    }),
+  ),
+);
+const runtimeModule = runtimeAssets.find(
+  (asset) => asset.asset.path === runtimeModulePath,
+)!;
+const runtimeConfig = createLearningTextAsset({
+  path: "graders/managed-rl-runtime.json",
+  text: JSON.stringify({
+    protocolVersion: "openpond.managedRlJsonlRuntime.v1",
+    module: runtimeModulePath,
+    moduleSha256: runtimeModule.asset.contentHash,
+    command: ["python3", "{module}"],
+    cwd: ".",
+    maxTurns: 50,
+    dependencyLock: "requirements.lock",
+    dependencyLockSha256: runtimeAssets.find(
+      (asset) => asset.asset.path === "requirements.lock",
+    )!.asset.contentHash,
+    upstreamRevision: revision,
+  }),
+  mediaType: "application/json",
+  visibility: "host_private",
+});
+const assets = [...verifierAssets, ...runtimeAssets, runtimeConfig];
 const reward = release(RewardReleaseSchema, {
   schemaVersion: "openpond.rewardRelease.v1",
   id: "tau-retail-native-db",
@@ -96,13 +164,13 @@ const reward = release(RewardReleaseSchema, {
   implementation: {
     kind: "custom_verifier",
     runtime: "sandbox_process",
-    verifierRef: assets[0]!.asset,
+    verifierRef: verifierAssets[0]!.asset,
     exportName: "verify",
     timeoutMs: 30000,
     networkPolicy: "none",
   },
   rawScore: { minimum: 0, maximum: 1 },
-  assets: assets.map((a) => a.asset),
+  assets: verifierAssets.map((a) => a.asset),
 });
 const binding = release(RewardBindingSchema, {
   schemaVersion: "openpond.rewardBinding.v1",
